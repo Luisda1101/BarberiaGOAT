@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/styleusers.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/html/pagAdmin.html" class="nav-button">Consulta de Servicios</a>
+            <a href="/html/addBarber.html" class="nav-button">Añadir barbero</a>
+            <a href="/html/addUsers.html" class="nav-button">Añadir Usuario</a>
+            <a href="/html/login.html" class="nav-button nav-logout">Salir</a>
+    </nav>
+
+    <div id="form-container">
+        <h2>Registrar Usuario</h2>
+        <form id="user-form">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="abc@abc.abc" required>
+
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" required>
+            
+            <label for="rol">Rol del Usuario:</label>
+        <div id="rol-options">
+            <label>
+                <input type="radio" name="rol" value="Administrador" required> Administrador
+            </label>
+            <label>
+                <input type="radio" name="rol" value="Suplente" required> Suplente
+            </label>
+        </div>
+            <button type="submit">Registrar Usuario</button>
+        </form>
+
+        <button id="showusers" type="submit">Mostrar usuarios</button>
+        <h2>Lista de usuarios</h2>
+        <table id="table-users">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Rol</th> 
+                </tr>
+            </thead>
+            <tbody>
+           
+            </tbody>
+        </table>
+
+    </div>
+
+    <div id="form-delete">
+        <h2>Elimina a un usuario</h2>
+        <form id="delete-form">
+            <label for="email-delete">Email del usuario a eliminar:</label>
+            <input type="email" id="email-delete" placeholder="abc@abc.abc" required>
+            <button id="deleteusers" type="button">Eliminar</button>
+        </form>
+    </div>
+
+    <script type="module" src="/js/addUserScript.js"></script>
+</body>
+</html>

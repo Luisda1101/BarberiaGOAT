@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/styleaddbarber.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/html/pagAdmin.html" class="nav-button">Consulta de Servicios</a>
+            <a href="/html/addBarber.html" class="nav-button">Añadir barbero</a>
+            <a href="/html/addUsers.html" class="nav-button">Añadir Usuario</a>
+            <a href="/html/login.html" class="nav-button nav-logout">Salir</a>
+        </div>
+    </nav>
+
+    <div id="form-container">
+        <h2>Registrar Barbero</h2>
+        <form id="barbero-form">
+            <label for="pin">PIN:</label>
+            <input type="text" id="pin" placeholder="D#" required>
+
+            <label for="nombre">Nombre del Barbero:</label>
+            <input type="text" id="nombre" placeholder="Nombre del barbero" required>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" placeholder="Teléfono del barbero" required>
+
+            <button type="submit">Registrar Barbero</button>
+        </form>
+
+        <button id="showbarbers">Mostrar barberos</button>
+
+        <h2>Lista de barberos</h2>
+        <table id="table-barbers">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>PIN</th> 
+                    
+                </tr>
+            </thead>
+            <tbody>
+           
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="form-delete">
+        <h2>Elimina a un barbero</h2>
+        <form id="delete-form">
+            <label for="id">PIN del barbero a eliminar:</label>
+            <input type="text" id="id" placeholder="D#" required>
+            <button id="deletebarbers" type="button">Eliminar</button>
+        </form>
+    </div>
+
+
+    <script type="module" src="/js/addBarberScript.js"></script>
+</body>
+</html>
