@@ -51,30 +51,16 @@ loginForm.addEventListener("submit", async (e) => {
                     MSJOKsuple();
                   //  window.location.href = "/html/pagSupl.html"
                 }else {
-                    Swal.fire({
-                        title: "Error",
-                        text: "Rol no reconocido. Por favor, contacta al administrador.",
-                        icon: "error",
-                        confirmButtonText: "Entendido",
-                    });
+                    MSJerrorrol();
                 
                     
                 }
             } else {
-                Swal.fire({
-                    title: "Error",
-                    text: "Contraseña o usuario incorrectos. Inténtalo de nuevo.",
-                    icon: "error",
-                    confirmButtonText: "Reintentar",
-                });
+                
+               MSJerrorval();
             }
         } else {
-            Swal.fire({
-                title: "Error",
-                text: "No se encontraron usuarios registrados.",
-                icon: "error",
-                confirmButtonText: "Reintentar",
-            });
+           MSJerrorusuario (); 
            
         }
     } catch (error) {
@@ -108,3 +94,28 @@ const MSJOKadmi = () => {
         window.location.href = "/html/pagAdmin.html";
     });
 };
+
+const MSJerrorrol = () => {
+    Swal.fire({
+        title: "Error",
+        text: "Rol no reconocido. Por favor, contacta al administrador.",
+        icon: "error",
+        confirmButtonText: "Reintentar",
+    });
+}
+const MSJerrorval = () => {
+    Swal.fire({
+        title: "Error",
+        text: "Contraseña o usuario incorrectos. Inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonText: "Reintentar",
+    });
+}
+const MSJerrorusuario = () => {
+    Swal.fire({
+        title: "Error",
+        text: "No se encontraron usuarios registrados.",
+        icon: "error",
+        confirmButtonText: "Reintentar",
+    });
+}

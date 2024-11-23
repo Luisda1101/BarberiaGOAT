@@ -212,3 +212,4 @@ btnEndDay.addEventListener("click", async () => {
 document.getElementById("btn-todos").addEventListener("click", mostrarTodosLosServicios);
 document.getElementById("btn-barbero").addEventListener("click", mostrarServiciosPorBarbero);
 document.getElementById("btn-liquidacion").addEventListener("click", mostrarLiquidacion);
+

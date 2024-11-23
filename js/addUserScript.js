@@ -54,8 +54,8 @@ form.addEventListener("submit", async (e) => {
         currentVersion += 1;
 
         await set(versionRef, currentVersion);
-
-        alert("Usuario registrado exitosamente");
+        MSJOKresgistro();
+        //alert("Usuario registrado exitosamente");
         form.reset();
 
     } catch (error) {
@@ -87,7 +87,8 @@ btnShow.addEventListener("click", async () => {
                 tableUsers.appendChild(row);
             });
         } else {
-            alert("No hay usuarios registrados.");
+            MSJerrornousuario();
+            // alert("No hay usuarios registrados.");
         }
     } catch (error) {
         console.error("Error al mostrar datos:", error);
@@ -140,8 +141,35 @@ btnDelete.addEventListener("click", async () => {
         }
     } catch (error) {
         console.error("Error al eliminar el usuario:", error);
-        alert("Hubo un error al intentar eliminar al usuario.");
+        MSJerroreliminarbarbero();
+        //alert("Hubo un error al intentar eliminar al usuario.");
     }
 
     document.getElementById("email").value = "";
 });
+const MSJerroreliminarbarbero = () => {
+    Swal.fire({
+        title: "Error",
+        text: "Hubo un error al intentar eliminar  al usuario.",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;
+const MSJOKresgistro = () => {
+    Swal.fire({
+        title: "Buen trabajo",
+        text: "Usuario registrado exitosamente",
+        icon: "success",
+        timer: 3500,
+        timerProgressBar: true,
+    
+    });
+};
+const MSJerrornousuario = () => {
+    Swal.fire({
+        title: "Error",
+        text: "No hay usuarios registrados.",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;

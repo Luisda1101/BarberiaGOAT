@@ -34,6 +34,7 @@ form.addEventListener("submit", async (e) => {
     const pin = document.getElementById("pin").value;
 
     if(!nombre || !telefono || !pin) {
+        
         alert("Por favor, complete todos los campos");
         return;
     }
@@ -45,7 +46,8 @@ form.addEventListener("submit", async (e) => {
             const barbers = snapshot.val();
             const pinExists = Object.values(barbers).some(barber => barber.id == pin);
             if (pinExists) {
-                alert("El pin ya está ocupado. Por favor, elija otro");
+                MSJerrorrol();
+               // alert("El pin ya está ocupado. Por favor, elija otro");
                 return;
             }
         }
@@ -69,13 +71,14 @@ form.addEventListener("submit", async (e) => {
         currentVersion += 1;
 
         await set(versionRef, currentVersion);
-
-        alert("Barbero registrado exitosamente");
+        MSJOKresgistro ();
+       // alert("Barbero registrado exitosamente");
         form.reset();
 
     } catch (error) {
         console.error("Error al guardar datos:", error);
-        alert("Hubo un error al registrar al barbero");
+        MSJerrorguardar();
+       // alert("Hubo un error al registrar al barbero");
     }
 });
 
@@ -108,7 +111,8 @@ btnShow.addEventListener("click", async () => {
         }
     } catch (error) {
         console.error("Error al mostrar datos:", error);
-        alert("Hubo un error al obtener los barberos.");
+        MSJerrorobtencion();
+        //alert("Hubo un error al obtener los barberos.");
     }
 });
 
@@ -147,18 +151,81 @@ btnDelete.addEventListener("click", async () => {
 
                     await set(versionRef, currentVersion);
                 } else {
-                    alert("No se encontró un barbero con el PIN ingresado.");
+                    MSJerrrpin();
+                   // alert("No se encontró un barbero con el PIN ingresado.");
                     console.log("No se encontró un barbero con el PIN ingresado.");
                 }
 
             } else {
-                alert("No hay barberos registrados.");
+                MSJerrorbarberoregistrado();
+              //  alert("No hay barberos registrados.");
                 console.log("No hay barberos registrados.");
             }
         } catch (error) {
-            console.error("Error al eliminar el barbero:", error);
-            alert("Hubo un error al intentar eliminar al barbero.");
+            console.error("Error al eliminar el barbero:", error); 
+            MSJerroreliminarbarbero();
+          //  alert("Hubo un error al intentar eliminar al barbero.");
         }
     
         document.getElementById("id").value = "";
 });
+
+const MSJerrorrol = () => {
+    Swal.fire({
+        title: "Error",
+        text: "El pin ya está ocupado. Por favor, elija otro",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;
+const MSJOKresgistro = () => {
+    Swal.fire({
+        title: "Buen trabajo",
+        text: "Inicio de sesión exitoso como Administrador!",
+        icon: "success",
+        timer: 3500,
+        timerProgressBar: true,
+    
+    });
+};
+const MSJerrorguardar = () => {
+    Swal.fire({
+        title: "Error",
+        text: "Hubo un error al registrar al barbero",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;
+const MSJerrorobtencion = () => {
+    Swal.fire({
+        title: "Error",
+        text: "Hubo un error al obtener los barberos.",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;
+const MSJerrrpin = () => {
+    Swal.fire({
+        title: "Error",
+        text: "No se encontró un barbero con el PIN ingresado.",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;
+ 
+const MSJerrorbarberoregistrado = () => {
+    Swal.fire({
+        title: "Error",
+        text: "No hay barberos registrados.",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;
+const MSJerroreliminarbarbero = () => {
+    Swal.fire({
+        title: "Error",
+        text: "Hubo un error al intentar eliminar al barbero.",
+        icon: "info",
+        confirmButtonText: "Reintentar",
+    });
+} ;
