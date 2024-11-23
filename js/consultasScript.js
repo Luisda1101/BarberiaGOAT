@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getDatabase, ref, onValue, get, set, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -16,6 +16,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const serviciosRef = ref(database, "servicios");
+
+const btnEndDay = document.getElementById("btn-terminardia");
 
 // Mostrar todos los servicios
 function mostrarTodosLosServicios() {
@@ -48,7 +50,7 @@ function mostrarServiciosPorBarbero() {
     document.getElementById("data-liquidacion").style.display = "none";
 
     const contenedor = document.getElementById("tablaPorBarbero");
-    contenedor.innerHTML = ""; // Limpiar el contenido
+    contenedor.innerHTML = "";
 
     onValue(serviciosRef, (snapshot) => {
         const data = snapshot.val();
@@ -56,7 +58,6 @@ function mostrarServiciosPorBarbero() {
         if (data) {
             const serviciosPorBarbero = {};
 
-            // Agrupar servicios por barbero
             for (const id in data) {
                 const servicio = data[id];
                 const barbero = servicio.nombre || "Desconocido";
@@ -134,9 +135,80 @@ function mostrarLiquidacion() {
     });
 }
 
+btnEndDay.addEventListener("click", async () => {
+    console.log("Iniciando el proceso para finalizar el día...");
+
+    try {
+        // Obtener todos los nodos de la colección servicios
+        console.log("Obteniendo datos de la colección 'servicios'...");
+        const snapshot = await get(serviciosRef);
+
+        if (!snapshot.exists()) {
+            console.log("La colección 'servicios' está vacía.");
+            alert("No hay servicios registrados para finalizar el día.");
+            return;
+        }
+
+        // Servicios existentes
+        const servicios = snapshot.val();
+        console.log("Datos obtenidos de 'servicios':", servicios);
+
+        // Generar la fecha actual en formato 'dd-mm-yyyy'
+        console.log("Generando la fecha actual...");
+        const today = new Date();
+        const formattedDate = today
+            .toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            })
+            .replace(/\//g, "-");
+        console.log("Fecha generada:", formattedDate);
+
+        // Preparar la referencia para liquidaciones con el nodo de fecha
+        console.log(`Preparando referencia para 'liquidaciones/${formattedDate}'...`);
+        const liquidacionesRef = ref(database, `liquidaciones/${formattedDate}`);
+
+        // Consolidar todos los servicios bajo el nuevo nodo con la fecha, ignorando "checkpoint"
+        console.log("Procesando datos para mover a liquidaciones...");
+        let dataToMove = {};
+        for (const [key, detalles] of Object.entries(servicios)) {
+            if (key !== "checkpoint") {
+                console.log(`Incluyendo el nodo '${key}' en los datos para liquidaciones.`);
+                dataToMove = { ...dataToMove, ...detalles };
+            } else {
+                console.log(`Nodo '${key}' identificado como 'checkpoint'; se omitirá.`);
+            }
+        }
+
+        console.log("Datos consolidados para liquidaciones:", dataToMove);
+
+        // Guardar en liquidaciones con la fecha como nodo
+        console.log("Guardando datos en 'liquidaciones'...");
+        await set(liquidacionesRef, dataToMove);
+        console.log("Datos guardados exitosamente en 'liquidaciones'.");
+
+        // Eliminar todos los nodos excepto "checkpoint"
+        console.log("Eliminando nodos de 'servicios' excepto 'checkpoint'...");
+        for (const key of Object.keys(servicios)) {
+            if (key !== "checkpoint") {
+                console.log(`Eliminando nodo '${key}'...`);
+                await remove(ref(database, `servicios/${key}`));
+                console.log(`Nodo '${key}' eliminado.`);
+            } else {
+                console.log(`Nodo '${key}' no se elimina por ser 'checkpoint'.`);
+            }
+        }
+
+        console.log("Proceso completado. Servicios movidos a liquidaciones y nodos eliminados.");
+        alert("El día ha finalizado. Todos los servicios se han trasladado a liquidaciones.");
+    } catch (error) {
+        console.error("Excepción durante el proceso de finalización del día:", error);
+        alert("Hubo un error al intentar finalizar el día. Revisa la consola para más detalles.");
+    }
+});
+
 // Asociar eventos
 document.getElementById("btn-todos").addEventListener("click", mostrarTodosLosServicios);
 document.getElementById("btn-barbero").addEventListener("click", mostrarServiciosPorBarbero);
 document.getElementById("btn-liquidacion").addEventListener("click", mostrarLiquidacion);
-
-

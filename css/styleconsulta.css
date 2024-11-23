@@ -72,19 +72,24 @@ button {
 }
 
 #btn-barbero {
-    background-color: #2196F3;
+    background-color: #4CAF50;
     color: white;
 }
 
 #btn-liquidacion {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#btn-terminardia {
     background-color: #FF5722;
     color: white;
+    margin-top: 30px;
 }
 
 button:hover {
     opacity: 0.8;
 }
-
 
 #data-todos,
 #data-barberos,
@@ -96,7 +101,6 @@ button:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     max-width: 800px;
 }
-
 
 table {
     width: 100%;
