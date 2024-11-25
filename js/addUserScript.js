@@ -27,7 +27,7 @@ const tableUsers = document.getElementById("table-users");
 const btnDelete = document.getElementById("deleteusers");
 
 function generarLlaveAleatoria(longitud) {
-    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const caracteres = '0123456789';
     let llave = '';
     for (let i = 0; i < longitud; i++) {
         const indice = Math.floor(Math.random() * caracteres.length);
@@ -42,7 +42,7 @@ form.addEventListener("submit", async (e) => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const rol = document.querySelector('input[name="rol"]:checked').value;
-    const keyRand = generarLlaveAleatoria(16);
+    const keyRand = generarLlaveAleatoria(4);
 
     try {
         const snapshot = await get(usuariosRef);
@@ -67,7 +67,6 @@ form.addEventListener("submit", async (e) => {
 
         await set(versionRef, currentVersion);
         MSJOKresgistro();
-        //alert("Usuario registrado exitosamente");
         form.reset();
 
     } catch (error) {
