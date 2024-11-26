@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes de Liquidaciones</title>
+    <link rel="stylesheet" href="/css/styleReports.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/html/pagAdmin.html" class="nav-button">Consulta de Servicios</a>
+            <a href="/html/addBarber.html" class="nav-button">Añadir Barbero</a>
+            <a href="/html/addUsers.html" class="nav-button">Añadir Usuario</a>
+            <a href="/html/reports.html" class="nav-button active">Reportes</a>
+            <a href="/html/login.html" class="nav-button nav-logout">Salir</a>
+        </div>
+    </nav>
+
+    <div id="report-container">
+        <h2>Reportes de Liquidaciones</h2>
+        <div class="filter-container">
+            <label for="date-picker">Seleccionar Fecha:</label>
+            <input type="month" id="month-picker">
+            <input type="date" id="date-picker">
+            <button id="btn-show-report">Mostrar Reporte</button>
+        </div>
+
+        <div id="report-summary">
+            <h3>Presupuesto Generado</h3>
+            <p id="budget-total">$0</p>
+        </div>
+
+        <h3>Detalles del Reporte</h3>
+        <table id="report-table">
+            <thead>
+                <tr>
+                    <th>Servicio</th>
+                    <th>Barbero</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filas dinámicas -->
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module" src="/js/reportsScript.js"></script>
+</body>
+</html>
