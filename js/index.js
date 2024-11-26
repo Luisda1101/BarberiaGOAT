@@ -102,7 +102,7 @@ const MSJerrorrol = () => {
         icon: "error",
         confirmButtonText: "Reintentar",
     });
-}
+};
 const MSJerrorval = () => {
     Swal.fire({
         title: "Error",
@@ -110,7 +110,7 @@ const MSJerrorval = () => {
         icon: "error",
         confirmButtonText: "Reintentar",
     });
-}
+};
 const MSJerrorusuario = () => {
     Swal.fire({
         title: "Error",
@@ -118,4 +118,4 @@ const MSJerrorusuario = () => {
         icon: "error",
         confirmButtonText: "Reintentar",
     });
-}
+};

@@ -145,7 +145,8 @@ btnEndDay.addEventListener("click", async () => {
 
         if (!snapshot.exists()) {
             console.log("La colección 'servicios' está vacía.");
-            alert("No hay servicios registrados para finalizar el día.");
+            MSJerrornofinalizardia();
+          //  alert("No hay servicios registrados para finalizar el día.");
             return;
         }
 
@@ -201,10 +202,12 @@ btnEndDay.addEventListener("click", async () => {
         }
 
         console.log("Proceso completado. Servicios movidos a liquidaciones y nodos eliminados.");
-        alert("El día ha finalizado. Todos los servicios se han trasladado a liquidaciones.");
+        MSJregistrodedia();
+        // alert("El día ha finalizado. Todos los servicios se han trasladado a liquidaciones.");
     } catch (error) {
         console.error("Excepción durante el proceso de finalización del día:", error);
-        alert("Hubo un error al intentar finalizar el día. Revisa la consola para más detalles.");
+        MSJerrorfinalizardia();
+        // alert("Hubo un error al intentar finalizar el día. Revisa la consola para más detalles.");
     }
 });
 
@@ -213,3 +216,32 @@ document.getElementById("btn-todos").addEventListener("click", mostrarTodosLosSe
 document.getElementById("btn-barbero").addEventListener("click", mostrarServiciosPorBarbero);
 document.getElementById("btn-liquidacion").addEventListener("click", mostrarLiquidacion);
 
+const MSJregistrodedia = ()=>{
+    Swal.fire({
+        title: "Buen trabajo",
+        text: "El día ha finalizado. Todos los servicios se han trasladado a liquidaciones.",
+        icon: "success",
+        timer: 3500,
+        timerProgressBar: true,
+   
+    });
+};
+
+const MSJerrorfinalizardia = () => {
+    Swal.fire({
+        title: "Error",
+        text: "Hubo un error al intentar finalizar el día. Revisa la consola para más detalles.",
+        icon: "error",
+        confirmButtonText: "Reintentar",
+    });
+};
+const MSJerrornofinalizardia = () => {
+    Swal.fire({
+        title: "Error",
+        text: "No hay servicios registrados para finalizar el día.",
+        icon: "error",
+        confirmButtonText: "Reintentar",
+    });
+}
+
+ 
