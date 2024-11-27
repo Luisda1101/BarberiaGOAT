@@ -1,12 +1,49 @@
-/* Estilos para el contenedor del formulario */
+.navbar {
+    background-color: #000;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.nav-button {
+    text-decoration: none;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.nav-button:hover {
+    background-color: #444;
+    color: #fff;
+}
+
+.nav-logout {
+    color: #ff4d4d;
+}
+
+.nav-logout:hover {
+    background-color: #660000;
+}
+
 .form-container {
-    max-width: 400px; /* Ancho máximo del formulario */
-    margin: 20px auto; /* Centrar el formulario en la página */
-    padding: 20px; /* Espaciado interno */
-    border: 1px solid #ccc; /* Borde del formulario */
-    border-radius: 5px; /* Bordes redondeados */
-    background-color: #f9f9f9; /* Fondo claro */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -20,66 +57,22 @@ label {
 
 input[type="text"],
 input[type="password"] {
-    width: 100%; /* Ancho completo */
-    padding: 10px; /* Espaciado interno */
-    border: 1px solid #ccc; /* Borde del campo */
-    border-radius: 5px; /* Bordes redondeados */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-/* Estilos para el botón de envío */
 .btn-submit {
-    background-color: #333; /* Fondo oscuro */
-    color: white; /* Texto en blanco */
-    padding: 10px 15px; /* Espaciado interno */
-    border: none; /* Sin borde */
-    border-radius: 5px; /* Bordes redondeados */
-    cursor: pointer; /* Cambiar el cursor al pasar el mouse */
-    transition: background-color 0.3s; /* Transición suave para el fondo */
+    background-color: #333;
+    color: white;
+    padding: 10px 15px; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .btn-submit:hover {
-    background-color: #555; /* Color de fondo al pasar el mouse */
-}
-/* Estilos para la barra de navegación */
-.navbar {
-    background-color: #333; /* Fondo oscuro */
-    padding: 10px 20px; /* Espaciado interno */
-}
-
-.navbar-container {
-    display: flex; /* Usar flexbox para alinear los botones */
-    justify-content: space-between; /* Espacio entre los botones */
-    align-items: center; /* Alinear verticalmente */
-}
-
-/* Estilos para los botones de navegación */
-.nav-button {
-    color: white; /* Color del texto en blanco */
-    text-decoration: none; /* Sin subrayado */
-    padding: 10px 15px; /* Espaciado interno para los botones */
-    border-radius: 5px; /* Bordes redondeados */
-    transition: background-color 0.3s; /* Transición suave para el fondo */
-}
-
-/* Estilo específico para el botón "Crear Usuario" */
-.nav-center {
-    flex-grow: 1; /* Permitir que este botón ocupe el espacio disponible */
-    text-align: center; /* Centrar el texto */
-}
-
-/* Estilo específico para el botón "Salir" */
-.nav-logout {
-    background-color: red; /* Fondo rojo */
-    padding: 10px 15px; /* Espaciado interno */
-    border-radius: 5px; /* Bordes redondeados */
-}
-
-/* Cambiar el color de fondo al pasar el mouse sobre el botón "Salir" */
-.nav-logout:hover {
-    background-color: darkred; /* Color de fondo más oscuro al pasar el mouse */
-}
-
-/* Cambiar el color de fondo al pasar el mouse sobre los otros botones */
-.nav-button:hover {
-    background-color: #555; /* Color de fondo al pasar el mouse */
+    background-color: #555;
 }

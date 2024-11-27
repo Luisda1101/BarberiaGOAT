@@ -26,17 +26,21 @@ body {
     color: #fff;
     padding: 0.5rem 1rem;
     font-size: 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     transition: background-color 0.3s ease-in-out;
 }
 
 .nav-button:hover {
     background-color: #444;
+    color: #fff;
 }
 
-.nav-button.active {
-    background-color: #28a745;
-    color: white;
+.nav-logout {
+    color: #ff4d4d;
+}
+
+.nav-logout:hover {
+    background-color: #660000;
 }
 
 #report-container {
