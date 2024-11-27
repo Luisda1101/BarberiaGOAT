@@ -1,7 +1,12 @@
 import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 
-        
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+} from "./sweetAlertsModule.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
     authDomain: "barberia-cd672.firebaseapp.com",
@@ -34,8 +39,7 @@ form.addEventListener("submit", async (e) => {
     const pin = document.getElementById("pin").value;
 
     if(!nombre || !telefono || !pin) {
-        
-        alert("Por favor, complete todos los campos");
+        showWarningAlert("Advertencia", "Por favor, ingrese todos los campos.");
         return;
     }
 
@@ -46,8 +50,7 @@ form.addEventListener("submit", async (e) => {
             const barbers = snapshot.val();
             const pinExists = Object.values(barbers).some(barber => barber.id == pin);
             if (pinExists) {
-                MSJerrorrol();
-               // alert("El pin ya está ocupado. Por favor, elija otro");
+                showWarningAlert("El pin ya está ocupado.", "Por favor, elige otro.");
                 return;
             }
         }
@@ -71,14 +74,12 @@ form.addEventListener("submit", async (e) => {
         currentVersion += 1;
 
         await set(versionRef, currentVersion);
-        MSJOKresgistro ();
-       // alert("Barbero registrado exitosamente");
+        showSuccessAlert("Guardado exitoso.", "El barbero ha sido agregado con éxito.");
         form.reset();
 
     } catch (error) {
         console.error("Error al guardar datos:", error);
-        MSJerrorguardar();
-       // alert("Hubo un error al registrar al barbero");
+        showErrorAlert("Error.", "Ha ocurrido un error al guardar los datos.");
     }
 });
 
@@ -107,21 +108,19 @@ btnShow.addEventListener("click", async () => {
                 tableBarbers.appendChild(row);
             });
         } else {
-            alert("No hay barberos registrados.");
+            showWarningAlert("Advertencia.", "No hay barberos registrados.");
         }
     } catch (error) {
         console.error("Error al mostrar datos:", error);
-        MSJerrorobtencion();
+        showErrorAlert("Error", "Error al mostrar los datos");
     }
 });
 
 btnDelete.addEventListener("click", async () => {
         const pinToDelete = document.getElementById("id").value.trim();
-        console.log("PIN ingresado:", pinToDelete);
     
         if (!pinToDelete) {
-            alert("Por favor ingrese el PIN del barbero a eliminar.");
-            console.log("No se ha ingresado un PIN.");
+            showWarningAlert("Advertencia.", "Por favor ingrese el PIN del barbero a eliminar.");
         }
     
         try {
@@ -132,7 +131,6 @@ btnDelete.addEventListener("click", async () => {
                 let barberokeyToDelete = null;
     
                 for (const [key, barbero] of Object.entries(barberos)) {
-                    console.log(`Comparando PIN: ${barbero.id} con PIN ingresado: ${pinToDelete}`);
                     if (barbero.id == pinToDelete) {
                         barberokeyToDelete = key;
                         break;
@@ -141,8 +139,7 @@ btnDelete.addEventListener("click", async () => {
 
                 if (barberokeyToDelete) {
                     await remove(ref(database, `barberos/${barberokeyToDelete}`));
-                    alert("Barbero eliminado con éxito.");
-                    console.log(`Barbero con clave ${barberokeyToDelete} eliminado.`);
+                    showSuccessAlert("Eliminado.", "Barbero eliminado con éxito.");
 
                     const versionSnapshot = await get(versionRef);
                     let currentVersion = versionSnapshot.exists() ? versionSnapshot.val(): 0;
@@ -150,20 +147,14 @@ btnDelete.addEventListener("click", async () => {
 
                     await set(versionRef, currentVersion);
                 } else {
-                    MSJerrrpin();
-                   // alert("No se encontró un barbero con el PIN ingresado.");
-                    console.log("No se encontró un barbero con el PIN ingresado.");
+                    showWarningAlert("Advertencia.", `No se encontró el barbero con el PIN ${pinToDelete}`);
                 }
 
             } else {
-                MSJerrorbarberoregistrado();
-              //  alert("No hay barberos registrados.");
-                console.log("No hay barberos registrados.");
+                showWarningAlert("Advertencia.", "No hay barberos registrados.");
             }
         } catch (error) {
-            console.error("Error al eliminar el barbero:", error); 
-            MSJerroreliminarbarbero();
-          //  alert("Hubo un error al intentar eliminar al barbero.");
+            showErrorAlert("Error", "Error al eliminar el barbero");
         }
     
         document.getElementById("id").value = "";

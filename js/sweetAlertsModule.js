@@ -1,62 +1,31 @@
-import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+import "https://cdn.jsdelivr.net/npm/sweetalert2@11";
 
-
-const msgE = () => {
+// Alerta de éxito
+export function showSuccessAlert(title = "¡Éxito!", text = "Operación completada correctamente") {
     Swal.fire({
-        title: "Error",
-        text: "El pin ya está ocupado. Por favor, elija otro",
-        icon: "info",
-        confirmButtonText: "Reintentar",
-    });
-} ;
-const MSJOKresgistro = () => {
-    Swal.fire({
-        title: "Buen trabajo",
-        text: "Inicio de sesión exitoso como Administrador!",
+        title,
+        text,
         icon: "success",
-        timer: 3500,
-        timerProgressBar: true,
-    
+        confirmButtonText: "Aceptar",
     });
-};
-const MSJerrorguardar = () => {
+}
+
+// Alerta de error
+export function showErrorAlert(title = "Error", text = "Ocurrió un problema") {
     Swal.fire({
-        title: "Error",
-        text: "Hubo un error al registrar al barbero",
-        icon: "info",
-        confirmButtonText: "Reintentar",
+        title,
+        text,
+        icon: "error",
+        confirmButtonText: "Entendido",
     });
-} ;
-const MSJerrorobtencion = () => {
+}
+
+// Alerta de advertencia
+export function showWarningAlert(title = "Advertencia", text = "Revisa esta información") {
     Swal.fire({
-        title: "Error",
-        text: "Hubo un error al obtener los barberos.",
-        icon: "info",
-        confirmButtonText: "Reintentar",
+        title,
+        text,
+        icon: "warning",
+        confirmButtonText: "Ok",
     });
-} ;
-const MSJerrrpin = () => {
-    Swal.fire({
-        title: "Error",
-        text: "No se encontró un barbero con el PIN ingresado.",
-        icon: "info",
-        confirmButtonText: "Reintentar",
-    });
-} ;
- 
-const MSJerrorbarberoregistrado = () => {
-    Swal.fire({
-        title: "Error",
-        text: "No hay barberos registrados.",
-        icon: "info",
-        confirmButtonText: "Reintentar",
-    });
-} ;
-const MSJerroreliminarbarbero = () => {
-    Swal.fire({
-        title: "Error",
-        text: "Hubo un error al intentar eliminar al barbero.",
-        icon: "info",
-        confirmButtonText: "Reintentar",
-    });
-} ;
+}

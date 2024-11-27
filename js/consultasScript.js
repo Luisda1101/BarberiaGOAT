@@ -1,7 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, onValue, get, set, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-// Configuración de Firebase
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+} from "./sweetAlertsModule.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
     authDomain: "barberia-cd672.firebaseapp.com",
@@ -19,7 +24,6 @@ const serviciosRef = ref(database, "servicios");
 
 const btnEndDay = document.getElementById("btn-terminardia");
 
-// Mostrar todos los servicios
 function mostrarTodosLosServicios() {
     document.getElementById("data-todos").style.display = "block";
     document.getElementById("data-barberos").style.display = "none";
@@ -97,7 +101,6 @@ function mostrarServiciosPorBarbero() {
     });
 }
 
-// Mostrar liquidación
 function mostrarLiquidacion() {
     document.getElementById("data-todos").style.display = "none";
     document.getElementById("data-barberos").style.display = "none";
@@ -145,8 +148,7 @@ btnEndDay.addEventListener("click", async () => {
 
         if (!snapshot.exists()) {
             console.log("La colección 'servicios' está vacía.");
-            MSJerrornofinalizardia();
-          //  alert("No hay servicios registrados para finalizar el día.");
+            showWarningAlert("Advertencia", "No hay servicios registrados para liquidar.");
             return;
         }
 
@@ -200,14 +202,9 @@ btnEndDay.addEventListener("click", async () => {
                 console.log(`Nodo '${key}' no se elimina por ser 'checkpoint'.`);
             }
         }
-
-        console.log("Proceso completado. Servicios movidos a liquidaciones y nodos eliminados.");
-        MSJregistrodedia();
-        // alert("El día ha finalizado. Todos los servicios se han trasladado a liquidaciones.");
+        showSuccessAlert("Proceso completado", "Los datos han sido guardados, ve a la pestaña de reportes para visualizar la información");
     } catch (error) {
-        console.error("Excepción durante el proceso de finalización del día:", error);
-        MSJerrorfinalizardia();
-        // alert("Hubo un error al intentar finalizar el día. Revisa la consola para más detalles.");
+        showErrorAlert("Error", "Hubo un error al intentar finalizar el día")
     }
 });
 
@@ -215,33 +212,3 @@ btnEndDay.addEventListener("click", async () => {
 document.getElementById("btn-todos").addEventListener("click", mostrarTodosLosServicios);
 document.getElementById("btn-barbero").addEventListener("click", mostrarServiciosPorBarbero);
 document.getElementById("btn-liquidacion").addEventListener("click", mostrarLiquidacion);
-
-const MSJregistrodedia = ()=>{
-    Swal.fire({
-        title: "Buen trabajo",
-        text: "El día ha finalizado. Todos los servicios se han trasladado a liquidaciones.",
-        icon: "success",
-        timer: 3500,
-        timerProgressBar: true,
-   
-    });
-};
-
-const MSJerrorfinalizardia = () => {
-    Swal.fire({
-        title: "Error",
-        text: "Hubo un error al intentar finalizar el día. Revisa la consola para más detalles.",
-        icon: "error",
-        confirmButtonText: "Reintentar",
-    });
-};
-const MSJerrornofinalizardia = () => {
-    Swal.fire({
-        title: "Error",
-        text: "No hay servicios registrados para finalizar el día.",
-        icon: "error",
-        confirmButtonText: "Reintentar",
-    });
-}
-
- 

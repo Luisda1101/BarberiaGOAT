@@ -1,7 +1,12 @@
 import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 
-        
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+} from "./sweetAlertsModule.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
     authDomain: "barberia-cd672.firebaseapp.com",
@@ -44,6 +49,11 @@ form.addEventListener("submit", async (e) => {
     const rol = document.querySelector('input[name="rol"]:checked').value;
     const keyRand = generarLlaveAleatoria(4);
 
+    if(!email || !password || !rol) {
+        showWarningAlert("Advertencia", "Por favor, ingrese todos los campos.");
+        return;
+    }
+
     try {
         const snapshot = await get(usuariosRef);
         let nuevoId = 1;
@@ -66,12 +76,11 @@ form.addEventListener("submit", async (e) => {
         currentVersion += 1;
 
         await set(versionRef, currentVersion);
-        MSJOKresgistro();
+        showSuccessAlert("Éxito", "Usuario agregado con éxito.");
         form.reset();
 
     } catch (error) {
-        console.error("Error al guardar datos:", error);
-        alert("Hubo un error al registrar al nuevo usuario");
+        showErrorAlert("Error", "Hubo un error al registrar al nuevo usuario");
     }
 });
 
@@ -93,27 +102,22 @@ btnShow.addEventListener("click", async () => {
                 row.innerHTML = `
                     <td>${usuario.correo}</td>
                     <td>${usuario.rol}</td>
-                    
                 `;
                 tableUsers.appendChild(row);
             });
         } else {
-            MSJerrornousuario();
-            // alert("No hay usuarios registrados.");
+            showWarningAlert("Advertencia", "No hay usuarios registrados.");
         }
     } catch (error) {
-        console.error("Error al mostrar datos:", error);
-        alert("Hubo un error al obtener los usuarios.");
+        showErrorAlert("Error", "Hubo un error al mostrar los usuarios");
     }
 });
 
 btnDelete.addEventListener("click", async () => {
     const emailToDelete = document.getElementById("email-delete").value.trim();
-    console.log("Email ingresado:", emailToDelete);
 
     if (!emailToDelete) {
-        alert("Por favor ingrese el email del usuario a eliminar.");
-        console.log("No se ha ingresado un email.");
+        showWarningAlert("Advertencia", "Por favor ingrese el email del usuario a eliminar");
     }
 
     try {
@@ -124,7 +128,6 @@ btnDelete.addEventListener("click", async () => {
             let userKeyToDelete = null;
 
             for (const [key, user] of Object.entries(usuarios)) {
-                console.log(`Comparando email: ${user.correo} con email ingresado: ${emailToDelete}`);
                 if (user.correo == emailToDelete) {
                     userKeyToDelete = key;
                     break;
@@ -133,8 +136,7 @@ btnDelete.addEventListener("click", async () => {
 
             if (userKeyToDelete) {
                 await remove(ref(database, `usuarios/${userKeyToDelete}`));
-                alert("Usuario eliminado con éxito.");
-                console.log(`Usuario con clave ${userKeyToDelete} eliminado.`);
+                showSuccessAlert("Éxito", `El usuario ${emailToDelete} ha sido eliminado con éxito`);
 
                 const versionSnapshot = await get(versionRef);
                 let currentVersion = versionSnapshot.exists() ? versionSnapshot.val(): 0;
@@ -142,45 +144,15 @@ btnDelete.addEventListener("click", async () => {
 
                 await set(versionRef, currentVersion);
             } else {
-                alert("No se encontró un usuario con el email ingresado.");
-                console.log("No se encontró un usuario con el email ingresado.");
+                showWarningAlert("Advertencia", `No se encontró un usuario con el email ${emailToDelete}`);
             }
 
         } else {
-            alert("No hay usuarios registrados.");
-            console.log("No hay usuarios registrados.");
+            showWarningAlert("Advertencia", "No hay usuarios registrados.");
         }
     } catch (error) {
-        console.error("Error al eliminar el usuario:", error);
-        MSJerroreliminarbarbero();
-        //alert("Hubo un error al intentar eliminar al usuario.");
+        showErrorAlert("Error", `Hubo un error al intentar eliminar el usuario ${emailToDelete}`);
     }
 
     document.getElementById("email").value = "";
 });
-const MSJerroreliminarbarbero = () => {
-    Swal.fire({
-        title: "Error",
-        text: "Hubo un error al intentar eliminar  al usuario.",
-        icon: "info",
-        confirmButtonText: "Reintentar",
-    });
-} ;
-const MSJOKresgistro = () => {
-    Swal.fire({
-        title: "Buen trabajo",
-        text: "Usuario registrado exitosamente",
-        icon: "success",
-        timer: 3500,
-        timerProgressBar: true,
-    
-    });
-};
-const MSJerrornousuario = () => {
-    Swal.fire({
-        title: "Error",
-        text: "No hay usuarios registrados.",
-        icon: "info",
-        confirmButtonText: "Reintentar",
-    });
-} ;
