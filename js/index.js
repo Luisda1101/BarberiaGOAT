@@ -78,7 +78,7 @@ const MSJOKsuple = () => {
         timerProgressBar: true,
     }).then(() => {
         // Redirigir después de que la alerta cierre
-        window.location.href = "/html/pagSupl.html";
+        window.location.href = "../html/pagSupl.html";
     });
 };
 
@@ -91,7 +91,7 @@ const MSJOKadmi = () => {
         timerProgressBar: true,
     }).then(() => {
         // Redirigir después de que la alerta cierre
-        window.location.href = "/html/pagAdmin.html";
+        window.location.href = "../html/pagAdmin.html";
     });
 };
 
