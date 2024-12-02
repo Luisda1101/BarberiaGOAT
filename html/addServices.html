@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/styleservices.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/html/pagAdmin.html" class="nav-button">Consulta de Servicios</a>
+            <a href="/html/addBarber.html" class="nav-button">Añadir barbero</a>
+            <a href="/html/addUsers.html" class="nav-button">Añadir Usuario</a>
+            <a href="/html/addServices.html" class="nav-button">Añadir Servicios</a>
+            <a href="/html/reports.html" class="nav-button active">Reportes</a>
+            <a href="/html/index.html" class="nav-button nav-logout">Salir</a>
+    </nav>
+
+    <div id="form-container">
+        <h2>Registrar Servicio</h2>
+        <form id="service-form">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" placeholder="Barba" required>
+
+            <label for="value">Valor:</label>
+            <input type="number" id="value"  placeholder="10.00" required>
+            
+            <label for="comission">Comisión:</label>
+            <input type="text" id="comission" placeholder="0.5" required>
+
+            <button type="submit">Registrar nuevo servicio</button>
+        </form>
+
+        <button id="showservices" type="submit">Mostrar servicios prestados</button>
+        <h2>Lista de Servicios</h2>
+        <table id="table-services">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Rol</th> 
+                </tr>
+            </thead>
+            <tbody>
+           
+            </tbody>
+        </table>
+
+    </div>
+
+    <div id="form-delete">
+        <h2>Elimina un servicio</h2>
+        <form id="delete-form">
+            <label for="service-delete">Nombre del servicio a eliminar:</label>
+            <input type="name" id="name-delete" placeholder="Barba" required>
+            <button id="deleteservices" type="button">Eliminar</button>
+        </form>
+    </div>
+
+    <script type="module" src="/js/addServicesScript.js"></script>
+</body>
+</html>

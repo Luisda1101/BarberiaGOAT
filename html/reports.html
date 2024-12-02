@@ -12,6 +12,7 @@
             <a href="/html/pagAdmin.html" class="nav-button">Consulta de Servicios</a>
             <a href="/html/addBarber.html" class="nav-button">Añadir Barbero</a>
             <a href="/html/addUsers.html" class="nav-button">Añadir Usuario</a>
+            <a href="/html/addServices.html" class="nav-button">Añadir Servicios</a>
             <a href="/html/reports.html" class="nav-button active">Reportes</a>
             <a href="/html/login.html" class="nav-button nav-logout">Salir</a>
         </div>
@@ -19,13 +20,18 @@
 
     <div id="report-container">
         <h2>Reportes de Liquidaciones</h2>
-        <div class="filter-container">
-            <label for="date-picker">Seleccionar Fecha:</label>
-            <input type="month" id="month-picker">
-            <input type="date" id="date-picker">
-            <button id="btn-show-report">Mostrar Reporte</button>
-        </div>
-
+        
+        <h3>Generar reportes de un intervalo de tiempo</h3>
+        <label for="date-range-start">Desde:</label>
+        <input type="date" id="date-range-start">
+        <label for="date-range-end">Hasta:</label>
+        <input type="date" id="date-range-end">
+        
+        <h3>Escoge un día para ver el reporte pertinente</h3>
+        <label for="date-picker">Fecha:</label>
+        <input type="date" id="date-picker">
+        <button id="btn-show-report">Mostrar Reporte</button>
+        
         <div id="report-summary">
             <h3>Presupuesto Generado</h3>
             <p id="budget-total">$0</p>
@@ -34,11 +40,7 @@
         <h3>Detalles del Reporte</h3>
         <table id="report-table">
             <thead>
-                <tr>
-                    <th>Servicio</th>
-                    <th>Barbero</th>
-                    <th>Valor</th>
-                </tr>
+                <!-- La cabecera cambiará dinámicamente -->
             </thead>
             <tbody>
                 <!-- Filas dinámicas -->

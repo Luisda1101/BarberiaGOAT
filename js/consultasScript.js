@@ -172,13 +172,19 @@ btnEndDay.addEventListener("click", async () => {
         console.log(`Preparando referencia para 'liquidaciones/${formattedDate}'...`);
         const liquidacionesRef = ref(database, `liquidaciones/${formattedDate}`);
 
-        // Consolidar todos los servicios bajo el nuevo nodo con la fecha, ignorando "checkpoint"
-        console.log("Procesando datos para mover a liquidaciones...");
+        // Crear una estructura para guardar múltiples nodos bajo la fecha
         let dataToMove = {};
+
+        console.log("Procesando datos para mover a liquidaciones...");
         for (const [key, detalles] of Object.entries(servicios)) {
             if (key !== "checkpoint") {
                 console.log(`Incluyendo el nodo '${key}' en los datos para liquidaciones.`);
-                dataToMove = { ...dataToMove, ...detalles };
+                // Agregar cada servicio con su clave única bajo el nodo de fecha
+                dataToMove[key] = detalles;
+                // Eliminar el nodo de 'servicios'
+                console.log(`Eliminando nodo '${key}' de la colección 'servicios'...`);
+                await remove(ref(database, `servicios/${key}`));
+                console.log(`Nodo '${key}' eliminado.`);
             } else {
                 console.log(`Nodo '${key}' identificado como 'checkpoint'; se omitirá.`);
             }
@@ -191,22 +197,16 @@ btnEndDay.addEventListener("click", async () => {
         await set(liquidacionesRef, dataToMove);
         console.log("Datos guardados exitosamente en 'liquidaciones'.");
 
-        // Eliminar todos los nodos excepto "checkpoint"
-        console.log("Eliminando nodos de 'servicios' excepto 'checkpoint'...");
-        for (const key of Object.keys(servicios)) {
-            if (key !== "checkpoint") {
-                console.log(`Eliminando nodo '${key}'...`);
-                await remove(ref(database, `servicios/${key}`));
-                console.log(`Nodo '${key}' eliminado.`);
-            } else {
-                console.log(`Nodo '${key}' no se elimina por ser 'checkpoint'.`);
-            }
-        }
-        showSuccessAlert("Proceso completado", "Los datos han sido guardados, ve a la pestaña de reportes para visualizar la información");
+        showSuccessAlert(
+            "Proceso completado",
+            "Los datos han sido guardados. Ve a la pestaña de reportes para visualizar la información."
+        );
     } catch (error) {
-        showErrorAlert("Error", "Hubo un error al intentar finalizar el día")
+        console.error("Error al procesar los datos:", error);
+        showErrorAlert("Error", "Hubo un error al intentar finalizar el día.");
     }
 });
+
 
 // Asociar eventos
 document.getElementById("btn-todos").addEventListener("click", mostrarTodosLosServicios);
