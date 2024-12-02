@@ -32,7 +32,7 @@ const tableUsers = document.getElementById("table-users");
 const btnDelete = document.getElementById("deleteusers");
 
 function generarLlaveAleatoria(longitud) {
-    const caracteres = '0123456789';
+    const caracteres = '123456789';
     let llave = '';
     for (let i = 0; i < longitud; i++) {
         const indice = Math.floor(Math.random() * caracteres.length);
