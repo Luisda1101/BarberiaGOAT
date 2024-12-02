@@ -1,6 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+} from "./sweetAlertsModule.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
     authDomain: "barberia-cd672.firebaseapp.com",
@@ -45,77 +51,22 @@ loginForm.addEventListener("submit", async (e) => {
 
             if(usuarioEncontrado == true) {
                 if(rolUsuario == "Administrador"){
-                   MSJOKadmi();
-                 //   window.location.href = "/html/pagAdmin.html";
+                   showSuccessAlert("Éxito", "Inicio como administrador");
+                   window.location.href = "../html/pagAdmin.html";
                 } else if (rolUsuario == "Suplente") {
-                    MSJOKsuple();
-                  //  window.location.href = "/html/pagSupl.html"
+                    showSuccessAlert("Éxito", "Inicio como suplente");
+                    window.location.href = "../html/pagSupl.html"
                 }else {
-                    MSJerrorrol();
-                
-                    
+                    showErrorAlert("Error", "Rol no conocido, por favor contacta con el administrador");
                 }
             } else {
-                
-               MSJerrorval();
+                showErrorAlert("Error", "Correo o contraseña incorrectos");
             }
         } else {
-           MSJerrorusuario (); 
-           
+           showWarningAlert("Advertencia", "No hay usuarios registrados");
         }
     } catch (error) {
         console.error("Error al iniciar sesión:", error);
         alert("Hubo un error al verificar los datos. Inténtalo de nuevo.");
     }
 });
-
-const MSJOKsuple = () => {
-    Swal.fire({
-        title: "Buen trabajo",
-        text: "Inicio de sesión exitoso como suplente!",
-        icon: "success",
-        timer: 3500,
-        timerProgressBar: true,
-    }).then(() => {
-        // Redirigir después de que la alerta cierre
-        window.location.href = "../html/pagSupl.html";
-    });
-};
-
-const MSJOKadmi = () => {
-    Swal.fire({
-        title: "Buen trabajo",
-        text: "Inicio de sesión exitoso como Administrador!",
-        icon: "success",
-        timer: 3500,
-        timerProgressBar: true,
-    }).then(() => {
-        // Redirigir después de que la alerta cierre
-        window.location.href = "../html/pagAdmin.html";
-    });
-};
-
-const MSJerrorrol = () => {
-    Swal.fire({
-        title: "Error",
-        text: "Rol no reconocido. Por favor, contacta al administrador.",
-        icon: "error",
-        confirmButtonText: "Reintentar",
-    });
-};
-const MSJerrorval = () => {
-    Swal.fire({
-        title: "Error",
-        text: "Contraseña o usuario incorrectos. Inténtalo de nuevo.",
-        icon: "error",
-        confirmButtonText: "Reintentar",
-    });
-};
-const MSJerrorusuario = () => {
-    Swal.fire({
-        title: "Error",
-        text: "No se encontraron usuarios registrados.",
-        icon: "error",
-        confirmButtonText: "Reintentar",
-    });
-};
