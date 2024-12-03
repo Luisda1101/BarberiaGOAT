@@ -51,11 +51,15 @@ loginForm.addEventListener("submit", async (e) => {
 
             if(usuarioEncontrado == true) {
                 if(rolUsuario == "Administrador"){
-                   showSuccessAlert("Éxito", "Inicio como administrador");
-                   window.location.href = "../html/pagAdmin.html";
+                    showSuccessAlert("Éxito", "Inicio como administrador");
+                    setTimeout(() => {
+                        window.location.href = "../html/pagAdmin.html";
+                    }, 3000);
                 } else if (rolUsuario == "Suplente") {
                     showSuccessAlert("Éxito", "Inicio como suplente");
-                    window.location.href = "../html/pagSupl.html"
+                    setTimeout(() => {
+                        window.location.href = "../html/pagSupl.html";
+                    }, 3000);
                 }else {
                     showErrorAlert("Error", "Rol no conocido, por favor contacta con el administrador");
                 }
