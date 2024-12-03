@@ -128,9 +128,13 @@ function mostrarLiquidacion() {
             }
 
             for (const barbero in liquidacionPorBarbero) {
-                const fila = tbody.insertRow();
-                fila.insertCell(0).textContent = barbero;
-                fila.insertCell(1).textContent = `$${liquidacionPorBarbero[barbero].toFixed(2)}`;
+                if (barbero == "Desconocido"){
+                    continue;
+                } else {
+                    const fila = tbody.insertRow();
+                    fila.insertCell(0).textContent = barbero;
+                    fila.insertCell(1).textContent = `$${liquidacionPorBarbero[barbero].toFixed(2)}`;
+                }
             }
         } else {
             tbody.innerHTML = `<tr><td colspan="2">No se encontraron datos</td></tr>`;

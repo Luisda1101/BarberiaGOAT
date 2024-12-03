@@ -18,36 +18,46 @@
         </div>
     </nav>
 
-    <div id="report-container">
-        <h2>Reportes de Liquidaciones</h2>
-        
-        <h3>Generar reportes de un intervalo de tiempo</h3>
-        <label for="date-range-start">Desde:</label>
-        <input type="date" id="date-range-start">
-        <label for="date-range-end">Hasta:</label>
-        <input type="date" id="date-range-end">
-        
-        <h3>Escoge un día para ver el reporte pertinente</h3>
-        <label for="date-picker">Fecha:</label>
-        <input type="date" id="date-picker">
-        <button id="btn-show-report">Mostrar Reporte</button>
-        
-        <div id="report-summary">
-            <h3>Presupuesto Generado</h3>
-            <p id="budget-total">$0</p>
-        </div>
+    <h1>Liquidaciones</h1>
+    <div class="buttons">
+        <button id="btn-liquidacion">Mostrar Reportes de los ultimos 30 días</button>
+    </div>
 
-        <h3>Detalles del Reporte</h3>
-        <table id="report-table">
+    <div id="data-todos">
+        <table id="tablaServicios">
             <thead>
-                <!-- La cabecera cambiará dinámicamente -->
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                </tr>
             </thead>
             <tbody>
-                <!-- Filas dinámicas -->
+                <!-- Los datos se agregarán aquí -->
             </tbody>
         </table>
     </div>
 
+    <div id="data-barberos" style="display: none;">
+        <h2>Servicios Agrupados</h2>
+        <div id="tablaPorBarbero"></div>
+    </div>
+
+    <div id="data-liquidacion" style="display: none;">
+        <h2>Liquidación</h2>
+        <table id="tablaLiquidacion">
+            <thead>
+                <tr>
+                    <th>Barbero</th>
+                    <th>Liquidación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los datos de liquidación aquí -->
+            </tbody>
+        </table>
+
+    </div>
     <script type="module" src="/BarberiaGOAT/js/reportsScript.js"></script>
 </body>
 </html>
