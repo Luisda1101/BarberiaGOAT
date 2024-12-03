@@ -77,27 +77,27 @@ function mostrarServiciosPorBarbero() {
             for (const barbero in serviciosPorBarbero) {
                 if (barbero === "Desconocido"){
                 continue;
-            } else {
-                const tabla = document.createElement("table");
-                tabla.classList.add("tablaBarbero");
-                const thead = tabla.createTHead();
-                const th = thead.insertRow().insertCell(0);
-                th.colSpan = 2;
-                th.textContent = `Barbero: ${barbero}`;
-                th.style.textAlign = "center";
-                th.style.fontWeight = "bold";
+                } else {
+                    const tabla = document.createElement("table");
+                    tabla.classList.add("tablaBarbero");
+                    const thead = tabla.createTHead();
+                    const th = thead.insertRow().insertCell(0);
+                    th.colSpan = 2;
+                    th.textContent = `Barbero: ${barbero}`;
+                    th.style.textAlign = "center";
+                    th.style.fontWeight = "bold";
                 
 
 
-                const tbody = tabla.createTBody();
-                serviciosPorBarbero[barbero].forEach((servicio) => {
-                    const fila = tbody.insertRow();
-                    fila.insertCell(0).textContent = servicio.tipo;
-                    fila.insertCell(1).textContent = servicio.valor;
-                });
+                    const tbody = tabla.createTBody();
+                    serviciosPorBarbero[barbero].forEach((servicio) => {
+                        const fila = tbody.insertRow();
+                        fila.insertCell(0).textContent = servicio.tipo;
+                        fila.insertCell(1).textContent = servicio.valor;
+                    });
 
-                contenedor.appendChild(tabla);
-            }
+                    contenedor.appendChild(tabla);
+                }
             }
         } else {
             contenedor.innerHTML = `<p>No se encontraron servicios</p>`;
