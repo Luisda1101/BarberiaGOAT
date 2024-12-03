@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
@@ -17,112 +17,107 @@ const database = getDatabase(app);
 
 const btnShowReport = document.getElementById("btn-show-report");
 const datePicker = document.getElementById("date-picker");
-const dateRangeStart = document.getElementById("date-range-start");
-const dateRangeEnd = document.getElementById("date-range-end");
+const startDate = document.getElementById("start-date");
+const endDate = document.getElementById("end-date");
 const budgetTotal = document.getElementById("budget-total");
-const reportTable = document.getElementById("report-table");
-const reportTableBody = reportTable.querySelector("tbody");
-const reportTableHead = reportTable.querySelector("thead");
+const reportTableBody = document.querySelector("#report-table tbody");
 
-btnShowReport.addEventListener("click", async () => {
+btnShowReport.addEventListener("click", () => {
     const selectedDate = datePicker.value;
-    const startDate = dateRangeStart.value;
-    const endDate = dateRangeEnd.value;
+    const start = startDate.value;
+    const end = endDate.value;
 
-    if ((selectedDate && (startDate || endDate)) || (startDate && !endDate) || (!startDate && endDate)) {
-        alert("Por favor, selecciona solo una opción válida.");
+    // Validar que el usuario no elija ambas opciones
+    if (selectedDate && (start || end)) {
+        alert("Por favor, selecciona solo una opción: día o intervalo.");
         return;
     }
 
     if (selectedDate) {
-        await loadReportsForDay(selectedDate);
-    } else if (startDate && endDate) {
-        await loadReportsForInterval(startDate, endDate);
+        loadReportsByDay(selectedDate);
+    } else if (start && end) {
+        loadReportsByInterval(start, end);
     } else {
-        alert("Debes seleccionar al menos una opción.");
+        alert("Por favor, selecciona un día o define un intervalo.");
     }
 });
 
-async function loadReportsForDay(date) {
+// Función para cargar reportes por día
+async function loadReportsByDay(date) {
     try {
-        const snapshot = await get(ref(database, `liquidaciones/${formatDate(date)}`));
+        const dbRef = ref(database, `Liquidaciones/${date}`);
+        const snapshot = await get(dbRef);
 
         if (!snapshot.exists()) {
-            alert("No se encontraron reportes para el día seleccionado.");
+            alert("No se encontraron reportes para la fecha seleccionada.");
             return;
         }
 
-        const reports = snapshot.val();
-        displayReports(reports, false);
+        const data = snapshot.val();
+        displayReportsByBarber(data);
     } catch (error) {
-        console.error("Error al cargar el reporte del día:", error);
-        alert("Ocurrió un error al cargar los reportes.");
+        console.error("Error al cargar reportes por día:", error);
     }
 }
 
-async function loadReportsForInterval(startDate, endDate) {
+// Función para cargar reportes por intervalo
+async function loadReportsByInterval(start, end) {
     try {
-        const snapshot = await get(ref(database, "liquidaciones"));
+        const dbRef = ref(database, "Liquidaciones");
+        const snapshot = await get(dbRef);
 
         if (!snapshot.exists()) {
-            alert("No se encontraron reportes.");
+            alert("No se encontraron reportes en el intervalo seleccionado.");
             return;
         }
 
-        const reports = snapshot.val();
-        const filteredReports = filterReportsByInterval(reports, startDate, endDate);
-        
-        if (Object.keys(filteredReports).length === 0) {
-            alert("No se encontraron reportes para el intervalo de fechas seleccionado.");
+        const data = snapshot.val();
+        const filteredData = {};
+
+        // Filtrar las fechas en el intervalo
+        Object.keys(data).forEach((date) => {
+            if (isDateInRange(date, start, end)) {
+                filteredData[date] = data[date];
+            }
+        });
+
+        if (Object.keys(filteredData).length === 0) {
+            alert("No se encontraron reportes en el intervalo seleccionado.");
             return;
         }
 
-        displayReports(filteredReports, true);
+        displayReportsByInterval(filteredData);
     } catch (error) {
-        console.error("Error al cargar los reportes:", error);
-        alert("Ocurrió un error al cargar los reportes.");
+        console.error("Error al cargar reportes por intervalo:", error);
     }
 }
 
-function filterReportsByInterval(reports, startDate, endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const filtered = {};
-
-    Object.keys(reports).forEach((key) => {
-        const reportDate = new Date(formatDate(key, false));
-        if (reportDate >= start && reportDate <= end) {
-            filtered[key] = reports[key];
-        }
-    });
-
-    return filtered;
+// Función para verificar si una fecha está en el rango
+function isDateInRange(date, start, end) {
+    const [day, month, year] = date.split("-");
+    const currentDate = new Date(year, month - 1, day);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    return currentDate >= startDate && currentDate <= endDate;
 }
 
-function displayReports(reports, includeDate) {
-    let totalBudget = 0;
+// Función para mostrar reportes agrupados por barbero (día)
+function displayReportsByBarber(data) {
     reportTableBody.innerHTML = "";
-    reportTableHead.innerHTML = `
-        <tr>
-            ${includeDate ? "<th>Fecha</th>" : ""}
-            <th>Barbero</th>
-            <th>Tipo</th>
-            <th>Valor</th>
-        </tr>
-    `;
+    let totalBudget = 0;
 
-    Object.entries(reports).forEach(([date, services]) => {
-        Object.values(services).forEach((service) => {
-            const { nombre, tipo, valor } = service;
+    Object.keys(data).forEach((barber) => {
+        data[barber].forEach((service) => {
+            const { tipo, valor } = service;
 
             const row = document.createElement("tr");
             row.innerHTML = `
-                ${includeDate ? `<td>${date}</td>` : ""}
-                <td>${nombre}</td>
+                <td>${barber}</td>
                 <td>${tipo}</td>
                 <td>$${valor}</td>
             `;
             reportTableBody.appendChild(row);
+
             totalBudget += valor;
         });
     });
@@ -130,7 +125,32 @@ function displayReports(reports, includeDate) {
     budgetTotal.textContent = `$${totalBudget.toLocaleString()}`;
 }
 
-function formatDate(date, forFirebase = true) {
-    const [year, month, day] = date.split("-");
-    return forFirebase ? `${day}-${month}-${year}` : `${year}-${month}-${day}`;
+// Función para mostrar reportes por intervalo (agrega fecha)
+function displayReportsByInterval(data) {
+    reportTableBody.innerHTML = "";
+    let totalBudget = 0;
+
+    Object.keys(data).forEach((date) => {
+        const dateRow = document.createElement("tr");
+        dateRow.innerHTML = `<td colspan="3" class="date-row">Fecha: ${date}</td>`;
+        reportTableBody.appendChild(dateRow);
+
+        Object.keys(data[date]).forEach((barber) => {
+            data[date][barber].forEach((service) => {
+                const { tipo, valor } = service;
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${barber}</td>
+                    <td>${tipo}</td>
+                    <td>$${valor}</td>
+                `;
+                reportTableBody.appendChild(row);
+
+                totalBudget += valor;
+            });
+        });
+    });
+
+    budgetTotal.textContent = `$${totalBudget.toLocaleString()}`;
 }
