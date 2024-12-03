@@ -52,7 +52,7 @@ loginForm.addEventListener("submit", async (e) => {
             if(usuarioEncontrado == true) {
                 if(rolUsuario == "Administrador"){
                    showSuccessAlert("Éxito", "Inicio como administrador");
-                   window.location.href = "../html/pagAdmin.html";
+                   window.location.href = "/BarberiaGOAT/html/pagAdmin";
                 } else if (rolUsuario == "Suplente") {
                     showSuccessAlert("Éxito", "Inicio como suplente");
                     window.location.href = "../html/pagSupl.html"
