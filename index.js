@@ -5,7 +5,7 @@ import {
     showSuccessAlert,
     showErrorAlert,
     showWarningAlert,
-} from "./sweetAlertsModule.js";
+} from "./js/sweetAlertsModule.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
@@ -52,10 +52,10 @@ loginForm.addEventListener("submit", async (e) => {
             if(usuarioEncontrado == true) {
                 if(rolUsuario == "Administrador"){
                    showSuccessAlert("Éxito", "Inicio como administrador");
-                   window.location.href = "/html/pagAdmin.html";
+                   window.location.href = "./html/pagAdmin.html";
                 } else if (rolUsuario == "Suplente") {
                     showSuccessAlert("Éxito", "Inicio como suplente");
-                    window.location.href = "/html/pagSupl.html"
+                    window.location.href = "./html/pagSupl.html"
                 }else {
                     showErrorAlert("Error", "Rol no conocido, por favor contacta con el administrador");
                 }
