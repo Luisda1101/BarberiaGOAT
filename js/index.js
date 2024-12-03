@@ -5,7 +5,7 @@ import {
     showSuccessAlert,
     showErrorAlert,
     showWarningAlert,
-} from "./sweetAlertsModule.js";
+} from "../js/sweetAlertsModule.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
