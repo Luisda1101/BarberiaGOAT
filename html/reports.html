@@ -14,28 +14,13 @@
             <a href="/BarberiaGOAT/html/addUsers.html" class="nav-button">Añadir Usuario</a>
             <a href="/BarberiaGOAT/html/addServices.html" class="nav-button">Añadir Servicios</a>
             <a href="/BarberiaGOAT/html/reports.html" class="nav-button active">Reportes</a>
-            <a href="../index.html" class="nav-button nav-logout">Salir</a>
+            <a href="/BarberiaGOAT/index.html" class="nav-button nav-logout">Salir</a>
         </div>
     </nav>
 
-    <h1>Liquidaciones</h1>
+    <h1>Reportes</h1>
     <div class="buttons">
-        <button id="btn-liquidacion">Mostrar Reportes de los ultimos 30 días</button>
-    </div>
-
-    <div id="data-todos">
-        <table id="tablaServicios">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Los datos se agregarán aquí -->
-            </tbody>
-        </table>
+        <button id="btn-reports">Mostrar Reportes de los ultimos 30 días</button>
     </div>
 
     <div id="data-barberos" style="display: none;">
@@ -43,21 +28,6 @@
         <div id="tablaPorBarbero"></div>
     </div>
 
-    <div id="data-liquidacion" style="display: none;">
-        <h2>Liquidación</h2>
-        <table id="tablaLiquidacion">
-            <thead>
-                <tr>
-                    <th>Barbero</th>
-                    <th>Liquidación</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Los datos de liquidación aquí -->
-            </tbody>
-        </table>
-
-    </div>
     <script type="module" src="/BarberiaGOAT/js/reportsScript.js"></script>
 </body>
 </html>
