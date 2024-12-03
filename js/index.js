@@ -53,12 +53,12 @@ loginForm.addEventListener("submit", async (e) => {
                 if(rolUsuario == "Administrador"){
                     showSuccessAlert("Éxito", "Inicio como administrador");
                     setTimeout(() => {
-                        window.location.href = "../html/pagAdmin.html";
+                        window.location.href = "/BarberiaGOAT/html/pagAdmin.html";
                     }, 3000);
                 } else if (rolUsuario == "Suplente") {
                     showSuccessAlert("Éxito", "Inicio como suplente");
                     setTimeout(() => {
-                        window.location.href = "../html/pagSupl.html";
+                        window.location.href = "/BarberiaGOAT/html/pagSupl.html";
                     }, 3000);
                 }else {
                     showErrorAlert("Error", "Rol no conocido, por favor contacta con el administrador");
