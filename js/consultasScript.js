@@ -75,6 +75,9 @@ function mostrarServiciosPorBarbero() {
 
             // Crear tablas por barbero
             for (const barbero in serviciosPorBarbero) {
+                if (barbero === "Desconocido"){
+                continue;
+            } else {
                 const tabla = document.createElement("table");
                 tabla.classList.add("tablaBarbero");
                 const thead = tabla.createTHead();
@@ -94,6 +97,7 @@ function mostrarServiciosPorBarbero() {
                 });
 
                 contenedor.appendChild(tabla);
+            }
             }
         } else {
             contenedor.innerHTML = `<p>No se encontraron servicios</p>`;
