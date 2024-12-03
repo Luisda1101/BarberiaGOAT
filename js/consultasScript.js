@@ -128,7 +128,7 @@ function mostrarLiquidacion() {
             }
 
             for (const barbero in liquidacionPorBarbero) {
-                if (barbero == "Desconocido"){
+                if (barbero === "Desconocido"){
                     continue;
                 } else {
                     const fila = tbody.insertRow();
