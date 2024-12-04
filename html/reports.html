@@ -20,12 +20,21 @@
 
     <h1>Reportes</h1>
     <div class="buttons">
-        <button id="btn-reports">Mostrar Reportes de los ultimos 30 días</button>
+        <button id="btn-reports">Mostrar Reportes de los últimos 30 días</button>
     </div>
 
     <div id="data-barberos" style="display: none;">
         <h2>Servicios Agrupados</h2>
-        <div id="tablaPorBarbero"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody id="tablaPorBarbero"></tbody>
+        </table>
     </div>
 
     <script type="module" src="/BarberiaGOAT/js/reportsScript.js"></script>

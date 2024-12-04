@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC78es1xjO7Ehb0Gt7Yt4aRaadR3wZDm3o",
@@ -12,86 +12,63 @@ const firebaseConfig = {
     measurementId: "G-YJT9HN3FK3"
 };
 
+// Inicializar Firebase y base de datos
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Elementos del DOM
 const btnReports = document.getElementById("btn-reports");
 const tablaPorBarbero = document.getElementById("tablaPorBarbero");
 const dataBarberos = document.getElementById("data-barberos");
 
+// Función para obtener las liquidaciones desde Firebase
 async function obtenerLiquidaciones() {
     try {
-        const liquidacionesSnapshot = await getDocs(collection(db, "liquidaciones"));
-        const reportes = {};
+        const liquidacionesRef = ref(db, "liquidaciones");
+        const snapshot = await get(liquidacionesRef);
 
-        liquidacionesSnapshot.forEach(async (docFecha) => {
-            const fecha = docFecha.id;
-            const serviciosSnapshot = await getDocs(collection(db, `liquidaciones/${fecha}`));
-
-            serviciosSnapshot.forEach((docServicio) => {
-                const servicio = docServicio.data();
-                const { nombre, tipo, valor } = servicio;
-
-                if (!reportes[nombre]) {
-                    reportes[nombre] = [];
-                }
-                reportes[nombre].push({ fecha, tipo, valor });
-            });
-
-            mostrarTabla(reportes);
-        });
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            procesarLiquidaciones(data);
+        } else {
+            console.error("No se encontraron liquidaciones en la base de datos.");
+        }
     } catch (error) {
-        console.error("Error al obtener liquidaciones:", error);
+        console.error("Error al obtener las liquidaciones:", error);
     }
 }
 
-function mostrarTabla(reportes) {
-    tablaPorBarbero.innerHTML = "";
-
-    Object.keys(reportes).forEach((barbero) => {
-        const servicios = reportes[barbero];
-        let totalValor = 0;
-
-        const barberoContainer = document.createElement("div");
-        barberoContainer.classList.add("barbero-container");
-
-        const encabezado = document.createElement("h3");
-        encabezado.textContent = `Barbero: ${barbero}`;
-        barberoContainer.appendChild(encabezado);
-
-        const tabla = document.createElement("table");
-        tabla.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Servicio</th>
-                    <th>Valor</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        `;
-        const tbody = tabla.querySelector("tbody");
-
-        servicios.forEach(({ fecha, tipo, valor }) => {
-            const fila = document.createElement("tr");
-            fila.innerHTML = `
-                <td>${fecha}</td>
-                <td>${tipo}</td>
-                <td>$${valor}</td>
-            `;
-            totalValor += valor;
-            tbody.appendChild(fila);
-        });
-
-        const resumen = document.createElement("p");
-        resumen.textContent = `Total generado: $${totalValor}`;
-        barberoContainer.appendChild(tabla);
-        barberoContainer.appendChild(resumen);
-
-        tablaPorBarbero.appendChild(barberoContainer);
-    });
-
+// Función para procesar y mostrar las liquidaciones
+function procesarLiquidaciones(data) {
     dataBarberos.style.display = "block";
+    tablaPorBarbero.innerHTML = ""; // Limpiar tabla antes de llenarla
+
+    for (const fecha in data) {
+        const serviciosPorFecha = data[fecha];
+
+        // Crear una fila para la fecha
+        const filaFecha = document.createElement("tr");
+        filaFecha.innerHTML = `
+            <td colspan="3" class="fecha-label">${fecha}</td>
+        `;
+        tablaPorBarbero.appendChild(filaFecha);
+
+        // Agregar filas para cada servicio en esa fecha
+        for (const idServicio in serviciosPorFecha) {
+            const { nombre, tipo, valor } = serviciosPorFecha[idServicio];
+            const filaServicio = document.createElement("tr");
+
+            filaServicio.innerHTML = `
+                <td>${nombre}</td>
+                <td>${tipo}</td>
+                <td>${valor}</td>
+            `;
+            tablaPorBarbero.appendChild(filaServicio);
+        }
+    }
 }
 
-btnReports.addEventListener("click", obtenerLiquidaciones);
+// Evento para mostrar los reportes
+btnReports.addEventListener("click", () => {
+    obtenerLiquidaciones();
+});
