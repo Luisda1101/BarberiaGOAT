@@ -42,6 +42,14 @@ function procesarLiquidaciones(data) {
     for (const fecha in data) {
         const serviciosPorFecha = data[fecha];
 
+        // Primero añade la fila de la fecha
+        const filaFecha = document.createElement("tr");
+        filaFecha.innerHTML = `
+            <td colspan="3" class="fecha-label">${fecha}</td>
+        `;
+        tablaPorBarbero.appendChild(filaFecha);
+
+        // Luego añade las filas de los servicios correspondientes a esa fecha
         for (const idServicio in serviciosPorFecha) {
             const { nombre, tipo, valor } = serviciosPorFecha[idServicio];
             const filaServicio = document.createElement("tr");
@@ -53,12 +61,6 @@ function procesarLiquidaciones(data) {
             `;
             tablaPorBarbero.appendChild(filaServicio);
         }
-
-        const filaFecha = document.createElement("tr");
-        filaFecha.innerHTML = `
-            <td colspan="3" class="fecha-label">${fecha}</td>
-        `;
-        tablaPorBarbero.appendChild(filaFecha);
     }
 }
 
