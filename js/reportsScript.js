@@ -12,16 +12,13 @@ const firebaseConfig = {
     measurementId: "G-YJT9HN3FK3"
 };
 
-// Inicializar Firebase y base de datos
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Elementos del DOM
 const btnReports = document.getElementById("btn-reports");
 const tablaPorBarbero = document.getElementById("tablaPorBarbero");
 const dataBarberos = document.getElementById("data-barberos");
 
-// Función para obtener las liquidaciones desde Firebase
 async function obtenerLiquidaciones() {
     try {
         const liquidacionesRef = ref(db, "liquidaciones");
@@ -38,22 +35,13 @@ async function obtenerLiquidaciones() {
     }
 }
 
-// Función para procesar y mostrar las liquidaciones
 function procesarLiquidaciones(data) {
     dataBarberos.style.display = "block";
-    tablaPorBarbero.innerHTML = ""; // Limpiar tabla antes de llenarla
+    tablaPorBarbero.innerHTML = "";
 
     for (const fecha in data) {
         const serviciosPorFecha = data[fecha];
 
-        // Crear una fila para la fecha
-        const filaFecha = document.createElement("tr");
-        filaFecha.innerHTML = `
-            <td colspan="3" class="fecha-label">${fecha}</td>
-        `;
-        tablaPorBarbero.appendChild(filaFecha);
-
-        // Agregar filas para cada servicio en esa fecha
         for (const idServicio in serviciosPorFecha) {
             const { nombre, tipo, valor } = serviciosPorFecha[idServicio];
             const filaServicio = document.createElement("tr");
@@ -65,10 +53,15 @@ function procesarLiquidaciones(data) {
             `;
             tablaPorBarbero.appendChild(filaServicio);
         }
+
+        const filaFecha = document.createElement("tr");
+        filaFecha.innerHTML = `
+            <td colspan="3" class="fecha-label">${fecha}</td>
+        `;
+        tablaPorBarbero.appendChild(filaFecha);
     }
 }
 
-// Evento para mostrar los reportes
 btnReports.addEventListener("click", () => {
     obtenerLiquidaciones();
 });
