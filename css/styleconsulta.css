@@ -50,6 +50,15 @@ h1 {
     margin: 20px 0;
 }
 
+h1::after {
+    content: "";
+    display: block;
+    width: 200px;
+    height: 4px;
+    background-color: #4CAF50;
+    margin: 8px auto 15px;
+}
+
 .buttons {
     display: flex;
     justify-content: center;
