@@ -1,6 +1,6 @@
 export function setCookie(name, value, minutes) {
     const expires = new Date(Date.now() + minutes * 60 * 1000).toUTCString();
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Strict; Secure`;
 }
 
 export function getCookie(name) {
