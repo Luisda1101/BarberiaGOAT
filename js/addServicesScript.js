@@ -40,19 +40,19 @@ const sessionCookie = getCookie("user");
 onAuthStateChanged(auth, (user) => {
     const session = sessionCookie ? JSON.parse(sessionCookie) : null;
     if (!user || !session) {
-        window.location.href = "../index.html";
+        window.location.href = "/BarberiaGOAT/index.html";
     } else {
         const { rol, loginTime, expireTime } = session;
         const currentTime = Date.now();
         if (loginTime && expireTime && (currentTime - loginTime > expireTime)) {
         // Sesión expirada
         deleteCookie("user");
-        window.location.href = "../index.html";
+        window.location.href = "/BarberiaGOAT/index.html";
         return;
     }
         if (rol !== "Administrador" && rol !== "Suplente") {
             showErrorAlert("Acceso denegado", "No tienes permiso para acceder a esta página.");
-            window.location.href = "../index.html";
+            window.location.href = "/BarberiaGOAT/index.html";
         } else {
             document.getElementById("user-role").textContent = `rol: ${rol}`;
         }

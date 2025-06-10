@@ -9,7 +9,7 @@ if (logoutButton) {
         const auth = getAuth();
         signOut(auth).then(() => {
             deleteCookie("user");
-            window.location.href = "../index.html";
+            window.location.href = "/BarberiaGOAT/index.html";
         });
     });
 }

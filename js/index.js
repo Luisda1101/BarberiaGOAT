@@ -42,7 +42,7 @@ function login(email, password){
             expireTime: timeSesion * 60 * 1000 
         }), timeSesion);
         showSuccessAlert("Login exitoso", "Bienvenido a la aplicación", 3000).then(() => {
-            window.location.href = rol === "Administrador" ? "../html/pagAdmin.html" : "../html/pagSupl.html";
+            window.location.href = rol === "Administrador" ? "/BarberiaGOAT/html/pagAdmin.html" : "/BarberiaGOAT/html/pagSupl.html";
         });
     })
     .catch((error) => {
