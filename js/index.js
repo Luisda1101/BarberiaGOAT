@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { setCookie } from "./sessionsUtils.js";
 
 import {
     showSuccessAlert,
@@ -20,57 +22,38 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const auth = getAuth();
 
 const loginForm = document.getElementById("login-form");
 
-loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+const timeSesion = 30; // minutos
 
+function login(email, password){
+    signInWithEmailAndPassword(auth, email, password)
+    .then(async (userCredential) => {
+        const user = userCredential.user;
+        const rolRef = ref(database, `roles/${user.uid}/rol`);
+        const snapshot = await get(rolRef);
+        const rol = snapshot.exists() ? snapshot.val() : "";
+        setCookie("user", JSON.stringify({
+            uid: user.uid,
+            rol,
+            loginTime: Date.now(),
+            expireTime: timeSesion * 60 * 1000 
+        }), timeSesion);
+        showSuccessAlert("Login exitoso", "Bienvenido a la aplicación", 3000).then(() => {
+            window.location.href = rol === "Administrador" ? "../html/pagAdmin.html" : "../html/pagSupl.html";
+        });
+    })
+    .catch((error) => {
+        showErrorAlert("Error de login", "Por favor, verifica tus credenciales e inténtalo de nuevo.", 3000);
+        console.log(error);
+    })
+}
+
+loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
-    try {
-
-        const usuariosRef = ref(database, "usuarios");
-
-        const snapshot = await get(usuariosRef);
-
-        if (snapshot.exists()) {
-            const usuarios = snapshot.val();
-            let usuarioEncontrado = false;
-            let rolUsuario = "";
-
-            for (const id in usuarios) {
-                const usuario = usuarios[id];
-                if (usuario.correo == email && usuario.contr == password) {
-                    usuarioEncontrado = true;
-                    rolUsuario = usuario.rol;
-                    break;
-                }
-            }
-
-            if(usuarioEncontrado == true) {
-                if(rolUsuario == "Administrador"){
-                    showSuccessAlert("Éxito", "Inicio como administrador");
-                    setTimeout(() => {
-                        window.location.href = "/BarberiaGOAT/html/pagAdmin.html";
-                    }, 3000);
-                } else if (rolUsuario == "Suplente") {
-                    showSuccessAlert("Éxito", "Inicio como suplente");
-                    setTimeout(() => {
-                        window.location.href = "/BarberiaGOAT/html/pagSupl.html";
-                    }, 3000);
-                }else {
-                    showErrorAlert("Error", "Rol no conocido, por favor contacta con el administrador");
-                }
-            } else {
-                showErrorAlert("Error", "Correo o contraseña incorrectos");
-            }
-        } else {
-           showWarningAlert("Advertencia", "No hay usuarios registrados");
-        }
-    } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        alert("Hubo un error al verificar los datos. Inténtalo de nuevo.");
-    }
+    login(email, password);
 });

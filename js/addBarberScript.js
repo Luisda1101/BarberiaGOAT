@@ -1,5 +1,7 @@
 import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getCookie, deleteCookie } from "./sessionsUtils.js";
 
 import {
     showSuccessAlert,
@@ -30,6 +32,32 @@ const btnShow = document.getElementById("showbarbers");
 const tableBarbers = document.getElementById("table-barbers");
 
 const btnDelete = document.getElementById("deletebarbers");
+
+const auth = getAuth();
+
+const sessionCookie = getCookie("user");
+
+onAuthStateChanged(auth, (user) => {
+    const session = sessionCookie ? JSON.parse(sessionCookie) : null;
+    if (!user || !session) {
+        window.location.href = "../index.html";
+    } else {
+        const { rol, loginTime, expireTime } = session;
+        const currentTime = Date.now();
+        if (loginTime && expireTime && (currentTime - loginTime > expireTime)) {
+        // Sesión expirada
+        deleteCookie("user");
+        window.location.href = "../index.html";
+        return;
+    }
+        if (rol !== "Administrador" && rol !== "Suplente") {
+            showErrorAlert("Acceso denegado", "No tienes permiso para acceder a esta página.");
+            window.location.href = "../index.html";
+        } else {
+            document.getElementById("user-role").textContent = `rol: ${rol}`;
+        }
+    }
+});
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();

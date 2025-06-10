@@ -1,22 +1,26 @@
 import "https://cdn.jsdelivr.net/npm/sweetalert2@11";
 
 // Alerta de éxito
-export function showSuccessAlert(title = "¡Éxito!", text = "Operación completada correctamente") {
-    Swal.fire({
+export function showSuccessAlert(title, text, timer) {
+    return Swal.fire({
         title,
         text,
         icon: "success",
         confirmButtonText: "Aceptar",
+        timer,
+        timerProgressBar: true,
     });
 }
 
 // Alerta de error
-export function showErrorAlert(title = "Error", text = "Ocurrió un problema") {
-    Swal.fire({
+export function showErrorAlert(title, text, timer) {
+    return Swal.fire({
         title,
         text,
         icon: "error",
         confirmButtonText: "Entendido",
+        timer,
+        timerProgressBar: true,
     });
 }
 

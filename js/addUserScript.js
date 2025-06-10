@@ -1,5 +1,7 @@
 import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getCookie, deleteCookie } from "./sessionsUtils.js";
 
 import {
     showSuccessAlert,
@@ -31,8 +33,34 @@ const tableUsers = document.getElementById("table-users");
 
 const btnDelete = document.getElementById("deleteusers");
 
+const auth = getAuth();
+
+const sessionCookie = getCookie("user");
+
+onAuthStateChanged(auth, (user) => {
+    const session = sessionCookie ? JSON.parse(sessionCookie) : null;
+    if (!user || !session) {
+        window.location.href = "../index.html";
+    } else {
+        const { rol, loginTime, expireTime } = session;
+        const currentTime = Date.now();
+        if (loginTime && expireTime && (currentTime - loginTime > expireTime)) {
+        // Sesión expirada
+        deleteCookie("user");
+        window.location.href = "../index.html";
+        return;
+    }
+        if (rol !== "Administrador" && rol !== "Suplente") {
+            showErrorAlert("Acceso denegado", "No tienes permiso para acceder a esta página.");
+            window.location.href = "../index.html";
+        } else {
+            document.getElementById("user-role").textContent = `rol: ${rol}`;
+        }
+    }
+});
+
 function generarLlaveAleatoria(longitud) {
-    const caracteres = '123456789';
+    const caracteres = '123456';
     let llave = '';
     for (let i = 0; i < longitud; i++) {
         const indice = Math.floor(Math.random() * caracteres.length);
@@ -49,30 +77,41 @@ form.addEventListener("submit", async (e) => {
     const rol = document.querySelector('input[name="rol"]:checked').value;
     const keyRand = generarLlaveAleatoria(4);
 
-    if(!email || !password || !rol) {
+    if (!email || !password || !rol) {
         showWarningAlert("Advertencia", "Por favor, ingrese todos los campos.");
         return;
     }
 
     try {
+        // Registrar usuario en Firebase Authentication
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        // Guardar el rol en la colección 'roles' bajo el UID
+        await set(ref(database, `roles/${user.uid}`), {
+            rol: rol,
+            email: email
+        });
+
+        // Obtener el siguiente índice autoincrementable para la colección 'usuarios'
+        const usuariosRef = ref(database, "usuarios");
         const snapshot = await get(usuariosRef);
         let nuevoId = 1;
-
         if (snapshot.exists()) {
             const users = snapshot.val();
-            const ids = Object.keys(users).map(Number);
-            nuevoId = Math.max(...ids) + 1;
+            const ids = Object.keys(users).map(Number).filter(n => !isNaN(n));
+            if (ids.length > 0) {
+                nuevoId = Math.max(...ids) + 1;
+            }
         }
-
+        // Guardar el correo y la key en la colección 'usuarios' bajo el índice autoincrementable
         await set(ref(database, `usuarios/${nuevoId}`), {
             correo: email,
-            contr: password,
-            rol: rol,
-            key: keyRand
+            key: keyRand,
+            rol: rol
         });
 
         const versionSnapshot = await get(versionRef);
-        let currentVersion = versionSnapshot.exists() ? versionSnapshot.val(): 0;
+        let currentVersion = versionSnapshot.exists() ? versionSnapshot.val() : 0;
         currentVersion += 1;
 
         await set(versionRef, currentVersion);
@@ -80,7 +119,11 @@ form.addEventListener("submit", async (e) => {
         form.reset();
 
     } catch (error) {
-        showErrorAlert("Error", "Hubo un error al registrar al nuevo usuario");
+        if (error.code === "auth/email-already-in-use") {
+            showErrorAlert("Error", "El correo ya está registrado en el sistema.");
+        } else {
+            showErrorAlert("Error", "Hubo un error al registrar al nuevo usuario");
+        }
     }
 });
 
@@ -88,7 +131,7 @@ btnShow.addEventListener("click", async () => {
     try {
         const snapshot = await get(usuariosRef);
 
-        if(snapshot.exists()) {
+        if (snapshot.exists()) {
             const usuarios = snapshot.val();
             tableUsers.innerHTML = `<thead>
                 <tr>
@@ -139,7 +182,7 @@ btnDelete.addEventListener("click", async () => {
                 showSuccessAlert("Éxito", `El usuario ${emailToDelete} ha sido eliminado con éxito`);
 
                 const versionSnapshot = await get(versionRef);
-                let currentVersion = versionSnapshot.exists() ? versionSnapshot.val(): 0;
+                let currentVersion = versionSnapshot.exists() ? versionSnapshot.val() : 0;
                 currentVersion += 1;
 
                 await set(versionRef, currentVersion);

@@ -1,5 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, onValue, get, set, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getCookie, deleteCookie } from "./sessionsUtils.js";
+import { push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
 import {
     showSuccessAlert,
@@ -22,7 +25,44 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const serviciosRef = ref(database, "servicios");
 
+const auth = getAuth();
+
+const sessionCookie = getCookie("user");
+
+onAuthStateChanged(auth, (user) => {
+    const session = sessionCookie ? JSON.parse(sessionCookie) : null;
+    if (!user || !session) {
+        window.location.href = "../index.html";
+    } else {
+        const { rol, loginTime, expireTime } = session;
+        const currentTime = Date.now();
+        if (loginTime && expireTime && (currentTime - loginTime > expireTime)) {
+        // Sesión expirada
+        deleteCookie("user");
+        window.location.href = "../index.html";
+        return;
+    }
+        if (rol !== "Administrador" && rol !== "Suplente") {
+            showErrorAlert("Acceso denegado", "No tienes permiso para acceder a esta página.");
+            window.location.href = "../index.html";
+        } else {
+            document.getElementById("user-role").textContent = `rol: ${rol}`;
+        }
+    }
+});
+
 const btnEndDay = document.getElementById("btn-terminardia");
+
+window.addEventListener("DOMContentLoaded", () => {
+    const session = sessionStorage.getItem("user");
+    if (session) {
+        const { rol } = JSON.parse(session);
+        if (rol !== "Administrador") {
+            // Oculta pestañas solo para admin
+            document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+        }
+    }
+});
 
 function mostrarTodosLosServicios() {
     document.getElementById("data-todos").style.display = "block";
@@ -34,8 +74,10 @@ function mostrarTodosLosServicios() {
         const data = snapshot.val();
         tbody.innerHTML = "";
 
+
         if (data) {
             for (const id in data) {
+                if (id === "checkpoint") continue;
                 const fila = tbody.insertRow();
                 fila.insertCell(0).textContent = data[id].nombre;
                 fila.insertCell(1).textContent = data[id].tipo;
@@ -44,6 +86,7 @@ function mostrarTodosLosServicios() {
         } else {
             tbody.innerHTML = `<tr><td colspan="3">No se encontraron datos</td></tr>`;
         }
+
     });
 }
 
@@ -53,16 +96,19 @@ function mostrarServiciosPorBarbero() {
     document.getElementById("data-barberos").style.display = "block";
     document.getElementById("data-liquidacion").style.display = "none";
 
-    const contenedor = document.getElementById("tablaPorBarbero");
-    contenedor.innerHTML = "";
+    const tabla = document.getElementById("tablaPorBarbero");
+    const tbody = tabla.getElementsByTagName("tbody")[0];
+    tbody.innerHTML = "";
 
     onValue(serviciosRef, (snapshot) => {
         const data = snapshot.val();
 
         if (data) {
+            // Agrupa servicios por barbero
             const serviciosPorBarbero = {};
 
             for (const id in data) {
+                if (id === "checkpoint") continue; // Ignora checkpoint
                 const servicio = data[id];
                 const barbero = servicio.nombre || "Desconocido";
 
@@ -73,32 +119,68 @@ function mostrarServiciosPorBarbero() {
                 serviciosPorBarbero[barbero].push(servicio);
             }
 
-            // Crear tablas por barbero
+            let hayDatos = false;
+            tbody.innerHTML = ""; // Limpiar antes de agregar
+
             for (const barbero in serviciosPorBarbero) {
-                if (barbero === "Desconocido"){
-                    continue;
-                } else {
-                    const tabla = document.createElement("table");
-                    tabla.classList.add("tablaBarbero");
-                    const thead = tabla.createTHead();
-                    const th = thead.insertRow().insertCell(0);
-                    th.colSpan = 2;
-                    th.textContent = `Barbero: ${barbero}`;
-                    th.style.textAlign = "center";
-                    th.style.fontWeight = "bold";
+                if (barbero === "Desconocido") continue;
 
-                    const tbody = tabla.createTBody();
-                    serviciosPorBarbero[barbero].forEach((servicio) => {
-                        const fila = tbody.insertRow();
-                        fila.insertCell(0).textContent = servicio.tipo;
-                        fila.insertCell(1).textContent = servicio.valor;
-                    });
+                // Fila de encabezado para el barbero
+                const thRow = document.createElement("tr");
+                const thBarbero = document.createElement("th");
+                thBarbero.colSpan = 4;
+                thBarbero.className = "table-dark text-center";
+                thBarbero.textContent = barbero;
+                thRow.appendChild(thBarbero);
+                tbody.appendChild(thRow);
 
-                    contenedor.appendChild(tabla);
-                }
+                // Fila de encabezados de columnas
+                const thHeaderRow = document.createElement("tr");
+                const thServicio = document.createElement("th");
+                thServicio.textContent = "Servicio";
+                const thDescripcion = document.createElement("th");
+                thDescripcion.textContent = "Descripción";
+                const thPrecio = document.createElement("th");
+                thPrecio.textContent = "Precio";
+                // Primer th vacío para alinear con el nombre del barbero
+                const thVacio = document.createElement("th");
+                thVacio.style.display = "none"; // Oculto, solo para estructura
+                thHeaderRow.appendChild(thVacio);
+                thHeaderRow.appendChild(thServicio);
+                thHeaderRow.appendChild(thDescripcion);
+                thHeaderRow.appendChild(thPrecio);
+                tbody.appendChild(thHeaderRow);
+
+                // Filas de servicios
+                serviciosPorBarbero[barbero].forEach(servicio => {
+                    const fila = document.createElement("tr");
+                    // Primera celda vacía para alinear con el nombre del barbero
+                    const tdVacio = document.createElement("td");
+                    tdVacio.style.display = "none";
+                    fila.appendChild(tdVacio);
+
+                    const tdServicio = document.createElement("td");
+                    tdServicio.textContent = servicio.tipo;
+                    fila.appendChild(tdServicio);
+
+                    const tdDescripcion = document.createElement("td");
+                    tdDescripcion.textContent = servicio.descripcion || "";
+                    fila.appendChild(tdDescripcion);
+
+                    const tdPrecio = document.createElement("td");
+                    tdPrecio.textContent = servicio.valor;
+                    fila.appendChild(tdPrecio);
+
+                    tbody.appendChild(fila);
+                    hayDatos = true;
+                });
+            }
+
+            if (!hayDatos) {
+                tbody.innerHTML = `<tr><td colspan="4">No se encontraron servicios</td></tr>`;
             }
         } else {
-            contenedor.innerHTML = `<p>No se encontraron servicios</p>`;
+            tbody.innerHTML = `<tr><td colspan="4">No se encontraron servicios</td></tr>`;
         }
     });
 }
@@ -130,7 +212,7 @@ function mostrarLiquidacion() {
             }
 
             for (const barbero in liquidacionPorBarbero) {
-                if (barbero === "Desconocido"){
+                if (barbero === "Desconocido") {
                     continue;
                 } else {
                     const fila = tbody.insertRow();
@@ -163,7 +245,6 @@ btnEndDay.addEventListener("click", async () => {
         console.log("Datos obtenidos de 'servicios':", servicios);
 
         // Generar la fecha actual en formato 'dd-mm-yyyy'
-        console.log("Generando la fecha actual...");
         const today = new Date();
         const formattedDate = today
             .toLocaleDateString("es-ES", {
@@ -174,38 +255,39 @@ btnEndDay.addEventListener("click", async () => {
             .replace(/\//g, "-");
         console.log("Fecha generada:", formattedDate);
 
-        // Preparar la referencia para liquidaciones con el nodo de fecha
-        console.log(`Preparando referencia para 'liquidaciones/${formattedDate}'...`);
-        const liquidacionesRef = ref(database, `liquidaciones/${formattedDate}`);
-
-        // Crear una estructura para guardar múltiples nodos bajo la fecha
-        let dataToMove = {};
-
-        console.log("Procesando datos para mover a liquidaciones...");
+        // Calcular sumatoria por barbero
+        const sumatoriaPorBarbero = {};
         for (const [key, detalles] of Object.entries(servicios)) {
+            if (key === "checkpoint") continue;
+            const barbero = detalles.nombre || "Desconocido";
+            const valor = parseFloat(detalles.valor) || 0;
+            if (!sumatoriaPorBarbero[barbero]) {
+                sumatoriaPorBarbero[barbero] = 0;
+            }
+            sumatoriaPorBarbero[barbero] += valor * 0.4; // Comisión del 40%
+        }
+
+        // Guardar la sumatoria en liquidaciones bajo la fecha, usando llave aleatoria
+        const liquidacionesRef = ref(database, `liquidaciones/${formattedDate}`);
+        for (const barbero in sumatoriaPorBarbero) {
+            if (barbero === "Desconocido") continue;
+            const nuevaLlaveRef = push(liquidacionesRef);
+            await set(nuevaLlaveRef, {
+                nombre: barbero,
+                ganancia: sumatoriaPorBarbero[barbero]
+            });
+        }
+
+        // Eliminar todos los servicios (excepto checkpoint)
+        for (const key of Object.keys(servicios)) {
             if (key !== "checkpoint") {
-                console.log(`Incluyendo el nodo '${key}' en los datos para liquidaciones.`);
-                // Agregar cada servicio con su clave única bajo el nodo de fecha
-                dataToMove[key] = detalles;
-                // Eliminar el nodo de 'servicios'
-                console.log(`Eliminando nodo '${key}' de la colección 'servicios'...`);
                 await remove(ref(database, `servicios/${key}`));
-                console.log(`Nodo '${key}' eliminado.`);
-            } else {
-                console.log(`Nodo '${key}' identificado como 'checkpoint'; se omitirá.`);
             }
         }
 
-        console.log("Datos consolidados para liquidaciones:", dataToMove);
-
-        // Guardar en liquidaciones con la fecha como nodo
-        console.log("Guardando datos en 'liquidaciones'...");
-        await set(liquidacionesRef, dataToMove);
-        console.log("Datos guardados exitosamente en 'liquidaciones'.");
-
         showSuccessAlert(
             "Proceso completado",
-            "Los datos han sido guardados. Ve a la pestaña de reportes para visualizar la información."
+            "La liquidación diaria ha sido guardada. Ve a la pestaña de reportes para visualizar la información."
         );
     } catch (error) {
         console.error("Error al procesar los datos:", error);
