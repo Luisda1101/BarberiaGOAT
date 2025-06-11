@@ -122,7 +122,7 @@ form.addEventListener("submit", async (e) => {
         if (error.code === "auth/email-already-in-use") {
             showErrorAlert("Error", "El correo ya está registrado en el sistema.");
         } else {
-            showErrorAlert("Error", "Hubo un error al registrar al nuevo usuario");
+            showErrorAlert("Error", "Hubo un error al registrar al nuevo usuario, verifica que la contraseña tenga al menos 6 caracteres.");
         }
     }
 });
