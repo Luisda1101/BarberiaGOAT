@@ -45,11 +45,11 @@ onAuthStateChanged(auth, (user) => {
         const { rol, loginTime, expireTime } = session;
         const currentTime = Date.now();
         if (loginTime && expireTime && (currentTime - loginTime > expireTime)) {
-        // Sesión expirada
-        deleteCookie("user");
-        window.location.href = "/BarberiaGOAT/index.html";
-        return;
-    }
+            // Sesión expirada
+            deleteCookie("user");
+            window.location.href = "/BarberiaGOAT/index.html";
+            return;
+        }
         if (rol !== "Administrador" && rol !== "Suplente") {
             showErrorAlert("Acceso denegado", "No tienes permiso para acceder a esta página.");
             window.location.href = "/BarberiaGOAT/index.html";
@@ -66,7 +66,7 @@ form.addEventListener("submit", async (e) => {
     const telefono = document.getElementById("telefono").value;
     const pin = document.getElementById("pin").value;
 
-    if(!nombre || !telefono || !pin) {
+    if (!nombre || !telefono || !pin) {
         showWarningAlert("Advertencia", "Por favor, ingrese todos los campos.");
         return;
     }
@@ -98,7 +98,7 @@ form.addEventListener("submit", async (e) => {
         });
 
         const versionSnapshot = await get(versionRef);
-        let currentVersion = versionSnapshot.exists() ? versionSnapshot.val(): 0;
+        let currentVersion = versionSnapshot.exists() ? versionSnapshot.val() : 0;
         currentVersion += 1;
 
         await set(versionRef, currentVersion);
@@ -115,7 +115,7 @@ btnShow.addEventListener("click", async () => {
     try {
         const snapshot = await get(barberosRef);
 
-        if(snapshot.exists()) {
+        if (snapshot.exists()) {
             const barberos = snapshot.val();
             tableBarbers.innerHTML = `<thead>
                 <tr>
@@ -126,14 +126,16 @@ btnShow.addEventListener("click", async () => {
             </thead>`;
 
             Object.values(barberos).forEach((barbero) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
+                if (barbero.nom !== "admin") {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
                     <td>${barbero.nom}</td>
                     <td>${barbero.telf}</td>
                     <td>${barbero.id}</td>
                     
                 `;
-                tableBarbers.appendChild(row);
+                    tableBarbers.appendChild(row);
+                }
             });
         } else {
             showWarningAlert("Advertencia.", "No hay barberos registrados.");
@@ -145,45 +147,45 @@ btnShow.addEventListener("click", async () => {
 });
 
 btnDelete.addEventListener("click", async () => {
-        const pinToDelete = document.getElementById("id").value.trim();
-    
-        if (!pinToDelete) {
-            showWarningAlert("Advertencia.", "Por favor ingrese el PIN del barbero a eliminar.");
-        }
-    
-        try {
-            const snapshot = await get(barberosRef);
-    
-            if (snapshot.exists()) {
-                const barberos = snapshot.val();
-                let barberokeyToDelete = null;
-    
-                for (const [key, barbero] of Object.entries(barberos)) {
-                    if (barbero.id == pinToDelete) {
-                        barberokeyToDelete = key;
-                        break;
-                    }
+    const pinToDelete = document.getElementById("id").value.trim();
+
+    if (!pinToDelete) {
+        showWarningAlert("Advertencia.", "Por favor ingrese el PIN del barbero a eliminar.");
+    }
+
+    try {
+        const snapshot = await get(barberosRef);
+
+        if (snapshot.exists()) {
+            const barberos = snapshot.val();
+            let barberokeyToDelete = null;
+
+            for (const [key, barbero] of Object.entries(barberos)) {
+                if (barbero.id == pinToDelete) {
+                    barberokeyToDelete = key;
+                    break;
                 }
-
-                if (barberokeyToDelete) {
-                    await remove(ref(database, `barberos/${barberokeyToDelete}`));
-                    showSuccessAlert("Eliminado.", "Barbero eliminado con éxito.");
-
-                    const versionSnapshot = await get(versionRef);
-                    let currentVersion = versionSnapshot.exists() ? versionSnapshot.val(): 0;
-                    currentVersion += 1;
-
-                    await set(versionRef, currentVersion);
-                } else {
-                    showWarningAlert("Advertencia.", `No se encontró el barbero con el PIN ${pinToDelete}`);
-                }
-
-            } else {
-                showWarningAlert("Advertencia.", "No hay barberos registrados.");
             }
-        } catch (error) {
-            showErrorAlert("Error", "Error al eliminar el barbero");
+
+            if (barberokeyToDelete) {
+                await remove(ref(database, `barberos/${barberokeyToDelete}`));
+                showSuccessAlert("Eliminado.", "Barbero eliminado con éxito.");
+
+                const versionSnapshot = await get(versionRef);
+                let currentVersion = versionSnapshot.exists() ? versionSnapshot.val() : 0;
+                currentVersion += 1;
+
+                await set(versionRef, currentVersion);
+            } else {
+                showWarningAlert("Advertencia.", `No se encontró el barbero con el PIN ${pinToDelete}`);
+            }
+
+        } else {
+            showWarningAlert("Advertencia.", "No hay barberos registrados.");
         }
-    
-        document.getElementById("id").value = "";
+    } catch (error) {
+        showErrorAlert("Error", "Error al eliminar el barbero");
+    }
+
+    document.getElementById("id").value = "";
 });
