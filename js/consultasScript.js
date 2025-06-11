@@ -54,7 +54,7 @@ onAuthStateChanged(auth, (user) => {
 const btnEndDay = document.getElementById("btn-terminardia");
 
 window.addEventListener("DOMContentLoaded", () => {
-    const session = sessionStorage.getItem("user");
+    const session = sessionCookie ? JSON.parse(sessionCookie) : null;
     if (session) {
         const { rol } = JSON.parse(session);
         if (rol !== "Administrador") {
