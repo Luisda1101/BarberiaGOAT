@@ -35,6 +35,11 @@ function login(email, password){
         const rolRef = ref(database, `roles/${user.uid}/rol`);
         const snapshot = await get(rolRef);
         const rol = snapshot.exists() ? snapshot.val() : "";
+        if (!rol) {
+            showErrorAlert("Acceso denegado", "Tu cuenta ha sido eliminada o no tienes permisos.");
+            auth.signOut && auth.signOut();
+            return;
+        }
         setCookie("user", JSON.stringify({
             uid: user.uid,
             rol,
