@@ -161,6 +161,7 @@ btnDelete.addEventListener("click", async () => {
 
     if (!emailToDelete) {
         showWarningAlert("Advertencia", "Por favor ingrese el email del usuario a eliminar");
+        return;
     }
 
     try {
@@ -178,7 +179,26 @@ btnDelete.addEventListener("click", async () => {
             }
 
             if (userKeyToDelete) {
+                // Eliminar de 'usuarios'
                 await remove(ref(database, `usuarios/${userKeyToDelete}`));
+
+                // Buscar UID en 'roles' por email
+                const rolesSnapshot = await get(ref(database, "roles"));
+                if (rolesSnapshot.exists()) {
+                    const roles = rolesSnapshot.val();
+                    let uidToDelete = null;
+                    for (const [uid, data] of Object.entries(roles)) {
+                        if (data.email === emailToDelete) {
+                            uidToDelete = uid;
+                            break;
+                        }
+                    }
+                    if (uidToDelete) {
+                        // Eliminar de 'roles'
+                        await remove(ref(database, `roles/${uidToDelete}`));
+                    }
+                }
+
                 showSuccessAlert("Éxito", `El usuario ${emailToDelete} ha sido eliminado con éxito`);
 
                 const versionSnapshot = await get(versionRef);
